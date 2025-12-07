@@ -1,0 +1,159 @@
+
+:root {
+  --accent: #0b76ff;
+  --accent-2: #06b6d4;
+  --muted: #59677a;
+  --card-bg: #ffffff;
+  --radius: 12px;
+  --shadow: 0 10px 30px rgba(16,24,40,0.06);
+  --container-width: 1140px;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+}
+
+/* Background */
+body {
+  margin: 0;
+  background: linear-gradient(180deg, rgba(245,249,255,0.94), rgba(230,240,255,0.96));
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: -200px;
+  left: -200px;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(11,118,255,0.25), transparent 70%);
+  filter: blur(40px);
+  z-index: -1;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  bottom: -200px;
+  right: -200px;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(6,182,212,0.25), transparent 70%);
+  filter: blur(40px);
+  z-index: -1;
+}
+
+/* Elements */
+.brand-logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  color: white;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 6px 18px rgba(11,118,255,0.12);
+}
+
+.card-custom {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(15,23,42,0.03);
+}
+
+.service-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  color: white;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+}
+
+.cta-primary {
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  border: none;
+  color: white;
+  font-weight: 700;
+}
+
+.muted { color: var(--muted); }
+
+/* Mobile Menu */
+.menu-toggle { display: none; }
+
+.menu-label {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: white;
+  border: 1px solid rgba(15,23,42,0.06);
+  cursor: pointer;
+}
+
+.mobile-nav {
+  display: none;
+  position: absolute;
+  width: 240px;
+  right: 16px;
+  top: 72px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  padding: 12px;
+  z-index: 50;
+}
+
+.mobile-nav a {
+  display: block;
+  padding: 8px;
+  text-decoration: none;
+  color: var(--muted);
+  border-radius: 6px;
+}
+
+.mobile-nav a:hover {
+  background: #f1f7ff;
+  color: var(--accent);
+}
+
+.menu-toggle:checked + .menu-label + .mobile-nav {
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .desktop-nav { display: flex; gap: 1rem; }
+  .menu-label, .mobile-nav { display: none; }
+}
+
+.container-max {
+  max-width: var(--container-width);
+  margin: auto;
+}
+
+/* HERO */
+.hero {
+  background: linear-gradient(90deg, rgba(255,255,255,0.90), rgba(255,255,255,0.82)),
+    url("https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1920&q=80");
+  background-size: cover;
+  background-position: center;
+  border-radius: 20px;
+  padding: 60px 40px;
+}
+
+/* Testimonials */
+.testimonial-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: grid;
+  place-items: center;
+  color: white;
+  font-weight: bold;
+}
+
+

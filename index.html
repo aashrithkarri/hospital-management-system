@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>TrainingWala — Upskill & Launch Careers</title>
+  <meta name="description" content="TrainingWala — Practical courses, live training and career support for engineering students and freshers.">
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="topbar container-max py-3 d-flex justify-content-between align-items-center">
+  <div class="d-flex align-items-center gap-2">
+    <div class="brand-logo">TW</div>
+    <div>
+      <div class="h5 mb-0">TrainingWala</div>
+      <small class="muted">Upskill • Projects • Internships</small>
+    </div>
+  </div>
+
+  <nav class="desktop-nav d-none align-items-center">
+    <a class="muted" href="#courses">Courses</a>
+    <a class="muted" href="#services">Services</a>
+    <a class="muted" href="#pricing">Pricing</a>
+    <a class="muted" href="#contact">Contact</a>
+    <button class="btn btn-sm btn-outline-primary ms-2">Sign in</button>
+    <button class="btn btn-sm cta-primary ms-2">Enroll Now</button>
+  </nav>
+
+  <div class="d-md-none">
+    <input id="menuToggle" class="menu-toggle" type="checkbox">
+    <label for="menuToggle" class="menu-label"><i class="bi bi-list"></i></label>
+
+    <nav class="mobile-nav">
+      <a href="#courses">Courses</a>
+      <a href="#services">Services</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#contact">Contact</a>
+
+      <button class="btn cta-primary w-100 mt-2">Enroll Now</button>
+      <button class="btn btn-outline-primary w-100 mt-2">Sign In</button>
+    </nav>
+  </div>
+</header>
+
+<section class="hero container-max my-4">
+  <div class="row g-4 align-items-center">
+    <div class="col-lg-7">
+      <span class="badge bg-opacity-10 text-primary mb-2">Hands-on • Projects • Industry Mentors</span>
+      <h1 class="display-6 fw-bold">Practical training & internships that get you hired</h1>
+      <p class="lead muted">Project-based courses, live workshops and placement-ready internships in Embedded, Cloud, Frontend & IoT.</p>
+
+      <div class="d-flex gap-2 flex-wrap mt-3">
+        <a href="#courses" class="btn cta-primary btn-lg">View Courses</a>
+        <a href="#contact" class="btn btn-outline-secondary btn-lg">Talk to Us</a>
+      </div>
+
+      <div class="row g-2 mt-4">
+        <div class="col-6 col-sm-4"><div class="card card-custom p-3"><small class="muted">Students Trained</small><div class="h5">5,200+</div></div></div>
+        <div class="col-6 col-sm-4"><div class="card card-custom p-3"><small class="muted">Internships</small><div class="h5">1,120+</div></div></div>
+        <div class="col-12 col-sm-4"><div class="card card-custom p-3"><small class="muted">Live Projects</small><div class="h5">300+</div></div></div>
+      </div>
+    </div>
+
+    <div class="col-lg-5">
+      <div class="card card-custom p-4">
+        <div class="text-center mb-3">
+          <h6>Free trial class</h6>
+          <p class="muted">Join a 1-hour demo session before enrolling.</p>
+        </div>
+
+        <form class="row g-2">
+          <div class="col-12"><label class="form-label small muted">Full name</label><input class="form-control" placeholder="Your name"></div>
+          <div class="col-12"><label class="form-label small muted">Email</label><input class="form-control" type="email" placeholder="you@example.com"></div>
+          <div class="col-12">
+            <label class="form-label small muted">Course</label>
+            <select class="form-select">
+              <option>Embedded Systems</option>
+              <option>Frontend Web Development</option>
+              <option>Cloud & DevOps</option>
+              <option>Machine Learning Basics</option>
+            </select>
+          </div>
+          <div class="col-12"><button class="btn cta-primary w-100">Book demo</button></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="services" class="py-5">
+  <div class="container-max">
+    <div class="row g-4 align-items-start">
+      <div class="col-lg-6">
+        <h2 class="fw-bold">What we offer</h2>
+        <p class="muted">Courses, workshops and company-like project experience.</p>
+
+        <ul class="list-unstyled">
+          <li class="d-flex gap-3 mb-3">
+            <div class="service-icon"><i class="bi bi-gear-fill"></i></div>
+            <div><div class="fw-bold">Project-based learning</div><small class="muted">Create real projects for interviews.</small></div>
+          </li>
+
+          <li class="d-flex gap-3 mb-3">
+            <div class="service-icon"><i class="bi bi-people-fill"></i></div>
+            <div><div class="fw-bold">Mentor support</div><small class="muted">Code reviews & guidance.</small></div>
+          </li>
+
+          <li class="d-flex gap-3">
+            <div class="service-icon"><i class="bi bi-briefcase-fill"></i></div>
+            <div><div class="fw-bold">Placement help</div><small class="muted">Mock interviews + resume review.</small></div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="row g-3">
+          <div class="col-md-6"><div class="card card-custom p-3 text-center"><h6>Live Workshops</h6><p class="muted small">Weekend batches</p></div></div>
+          <div class="col-md-6"><div class="card card-custom p-3 text-center"><h6>Capstone Projects</h6><p class="muted small">Resume-ready</p></div></div>
+          <div class="col-md-6"><div class="card card-custom p-3 text-center"><h6>1-1 Mentoring</h6><p class="muted small">Personal doubt solving</p></div></div>
+          <div class="col-md-6"><div class="card card-custom p-3 text-center"><h6>Interview Prep</h6><p class="muted small">Mocks + feedback</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="courses" class="py-5">
+  <div class="container-max">
+    <h2 class="fw-bold">Popular Courses</h2>
+    <p class="muted">Every course includes live classes + project work.</p>
+
+    <div class="row g-3 mt-3">
+      <div class="col-md-4"><div class="card card-custom p-3 h-100"><h5>Embedded Systems</h5><p class="muted small">Microcontrollers, IoT & sensors</p><div class="d-flex justify-content-between"><small>8 weeks</small><button class="btn btn-sm cta-primary">Enroll</button></div></div></div>
+
+      <div class="col-md-4"><div class="card card-custom p-3 h-100"><h5>Frontend Web Dev</h5><p class="muted small">HTML, CSS, JS + portfolio</p><div class="d-flex justify-content-between"><small>6 weeks</small><button class="btn btn-sm btn-outline-primary">Enroll</button></div></div></div>
+
+      <div class="col-md-4"><div class="card card-custom p-3 h-100"><h5>Cloud & DevOps</h5><p class="muted small">AWS basics, CI/CD, Docker</p><div class="d-flex justify-content-between"><small>10 weeks</small><button class="btn btn-sm cta-primary">Enroll</button></div></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing" class="py-5">
+  <div class="container-max">
+
+    <h2 class="fw-bold">Pricing</h2>
+    <p class="muted">Simple and transparent plans.</p>
+
+    <div class="row g-3 mt-3">
+
+      <div class="col-md-4">
+        <div class="card card-custom p-4 h-100">
+          <h5>Starter</h5>
+          <div class="h3 fw-bold mt-2">₹0 <small class="muted">/ free trial</small></div>
+          <ul class="mt-2 muted small"><li>1 course demo</li><li>Community support</li></ul>
+          <button class="btn btn-outline-primary w-100 mt-auto">Try free</button>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card card-custom p-4 h-100">
+          <h5>Pro</h5>
+          <div class="h3 fw-bold mt-2">₹149 <small class="muted">/ course</small></div>
+          <ul class="mt-2 muted small">
+            <li>Live classes</li>
+            <li>1-1 mentor calls</li>
+            <li>Placement help</li>
+          </ul>
+          <button class="btn cta-primary w-100 mt-auto">Get Pro</button>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card card-custom p-4 h-100">
+          <h5>Team</h5>
+          <div class="h3 fw-bold mt-2">₹699 <small class="muted">/ team</small></div>
+          <ul class="mt-2 muted small"><li>Group training</li><li>Custom projects</li></ul>
+          <button class="btn btn-outline-primary w-100 mt-auto">Contact Sales</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container-max">
+    <h2 class="fw-bold">What our students say</h2>
+
+    <div class="row g-3 mt-3">
+      <div class="col-md-4">
+        <div class="card card-custom p-3">
+          <div class="d-flex gap-3">
+            <div class="testimonial-avatar">AK</div>
+            <div>
+              <b>Aashrith K.</b>
+              <p class="muted small mt-2 mb-0">"Hands-on projects helped me get internship offers."</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card card-custom p-3">
+          <div class="d-flex gap-3">
+            <div class="testimonial-avatar">SP</div>
+            <div>
+              <b>Siva Prasad K.</b>
+              <p class="muted small mt-2 mb-0">"Portfolio projects made my resume strong."</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card card-custom p-3">
+          <div class="d-flex gap-3">
+            <div class="testimonial-avatar">MK</div>
+            <div>
+              <b>Manoj V.</b>
+              <p class="muted small mt-2 mb-0">"Mentor support was excellent."</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="py-5">
+  <div class="container-max">
+    <div class="row g-4">
+
+      <div class="col-lg-7">
+        <h2 class="fw-bold">Request a call</h2>
+        <p class="muted">Our advisor will reach out to you.</p>
+
+        <form class="row g-3 mt-2">
+          <div class="col-md-6"><label class="form-label small muted">Full name</label><input class="form-control" placeholder="Your name"></div>
+          <div class="col-md-6"><label class="form-label small muted">Email</label><input class="form-control" type="email" placeholder="you@example.com"></div>
+          <div class="col-md-6"><label class="form-label small muted">Phone</label><input class="form-control" placeholder="+91 98xxxxxxx"></div>
+          <div class="col-md-6">
+            <label class="form-label small muted">Course</label>
+            <select class="form-select">
+              <option>Frontend Web Dev</option>
+              <option>Embedded Systems</option>
+              <option>Cloud & DevOps</option>
+            </select>
+          </div>
+          <div class="col-12"><label class="form-label small muted">Message</label><textarea class="form-control" placeholder="Write here..."></textarea></div>
+          <div class="col-12"><button class="btn cta-primary">Request callback</button></div>
+        </form>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="card card-custom p-4">
+          <h5>Office & Support</h5>
+          <p class="muted small">Email: contact@trainingwala.com</p>
+          <p class="muted small">Phone: +91 98xxxxxxx</p>
+
+          <hr>
+          <h6>Why TrainingWala?</h6>
+          <ul class="muted small"><li>Real projects</li><li>Mock interviews</li><li>Flexible batches</li></ul>
+
+          <button class="btn btn-outline-primary w-100 mt-3">Request Brochure (PDF)</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<footer class="py-3">
+  <div class="container-max d-flex justify-content-between align-items-center">
+    <div>
+      <strong>TrainingWala</strong><br>
+      <small class="muted">©️ 2025 TrainingWala. All rights reserved.</small>
+    </div>
+    <div>
+      <a class="muted me-3" href="#">Privacy</a>
+      <a class="muted" href="#">Terms</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
