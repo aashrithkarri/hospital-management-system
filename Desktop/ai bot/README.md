@@ -1,13 +1,24 @@
-# Surekha Hospital — AI Chatbot & Admin Dashboard System
+# Hospital Appointment System
 
-An intelligent AI Patient Engagement, Doctor Availability & Appointment Booking System for **Surekha Hospital**, featuring a dedicated Admin Dashboard.
+> **Project**: Appointment Management System  
+> An intelligent AI Patient Engagement, Doctor Availability & Appointment Booking Platform featuring conversational AI Voice & Chat Receptionists (English & Telugu), authentic specialist doctor schedules, and a role-based Staff Admin Dashboard.
+
+---
+
+## 🚀 Key Features
+
+- 🏥 **Hospital Landing Page**: Modern Clinical Clarity design showcasing resident specialist physicians, transparent pricing, and 1-click booking routing.
+- 💬 **AI Assistant Chatbot**: LangGraph-powered conversational agent with real-time token telemetry and session memory.
+- 📞 **AI Voice Call Simulator**: High-fidelity Indian voice receptionist with instant unblocked speech loops and live SMS booking dispatch alerts.
+- 🌐 **Telugu Multilingual Support**: Seamless English and Telugu conversational support with instant script translation.
+- 📊 **Role-Based Admin Dashboard**: Operations Overview, Patient Leads CRM, Doctor Availability Schedules, Voice Bookings, Email Inbox, and SMS Dispatch logs.
 
 ---
 
 ## 📁 Repository Structure
 
 ```
-ai bot/
+hospital-management-system/
 ├── backend/
 │   ├── server.js              # Express API & MySQL Middleware (Port 3000)
 │   ├── chatbot-server.js      # Express Chatbot & Admin Control Center (Port 4000)
@@ -18,13 +29,13 @@ ai bot/
 │   └── .env                   # Environment Configuration
 │
 ├── frontend/
-│   ├── admin.html             # Admin Control Center Dashboard UI
+│   ├── index.html             # Hospital Landing Page
+│   ├── chatbot.html           # AI Health Assistant Chat Interface
+│   ├── chatbot.css            # Clinical Clarity Theme Stylesheet
+│   ├── voice-call.html        # AI Voice Call Receptionist Simulator
+│   ├── admin.html             # Staff Admin Control Center UI
 │   ├── admin.css              # Admin Dashboard Dark Glassmorphism Styling
-│   ├── admin.js               # Admin Dashboard Controller & Real-Time Data Fetcher
-│   ├── chatbot.html           # AI Patient Assistant UI Interface
-│   ├── chatbot.css            # Chatbot Stylesheet
-│   ├── index.html             # Clinic Website Landing Page
-│   └── style.css              # Clinic Website Stylesheet
+│   └── admin.js               # Admin Dashboard Controller & Real-Time Data Fetcher
 │
 └── README.md                  # Project Root Documentation
 ```
@@ -33,32 +44,36 @@ ai bot/
 
 ## 🌐 Application URLs
 
-- **Admin Dashboard**: **[http://localhost:4000/admin](http://localhost:4000/admin)**
-- **AI Chatbot**: **[http://localhost:4000/chatbot](http://localhost:4000/chatbot)**
-- **Hospital Website**: Open `frontend/index.html` in browser.
+- 🏥 **Hospital Website**: **[http://localhost:4000](http://localhost:4000)**
+- 💬 **AI Health Chatbot**: **[http://localhost:4000/chatbot](http://localhost:4000/chatbot)**
+- 📞 **Voice Call Agent**: **[http://localhost:4000/voice-call](http://localhost:4000/voice-call)**
+- 📊 **Staff Admin Portal**: **[http://localhost:4000/admin](http://localhost:4000/admin)**
+  - *Admin credentials*: `admin` / `admin123`
+  - *Staff credentials*: `user` / `user123`
 
 ---
 
 ## ⚡ How to Run
 
-### 1. Backend Setup (`/backend`)
+### 1. Install Dependencies
 
 ```bash
+# Node.js dependencies
+npm install
+
+# Backend dependencies
 cd backend
 npm install
 pip install -r requirements.txt
+cd ..
 ```
 
-**Start Services**:
-- **Start Chatbot & Admin Server**:
-  ```bash
-  npm start
-  ```
-- **Start Python Agent**:
-  ```bash
-  python langgraph_agent.py
-  ```
-- **Start API Middleware Server**:
-  ```bash
-  npm run api
-  ```
+### 2. Start Services
+
+```bash
+# Start Node.js Web & Chatbot Server (Port 4000)
+npm start
+
+# Start Python LangGraph AI Engine (Port 8000)
+python3 backend/langgraph_agent.py
+```

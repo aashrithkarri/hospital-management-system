@@ -1,7 +1,7 @@
 {
-  "name": "trainingwala-ai-chatbot",
+  "name": "appointment-management-system",
   "version": "1.0.0",
-  "description": "TrainingWala Health Clinic AI Chatbot Server & LangGraph Integration",
+  "description": "Appointment Management System — AI Hospital Appointment & CRM Platform",
   "main": "chatbot-server.js",
   "scripts": {
     "start": "node chatbot-server.js",
