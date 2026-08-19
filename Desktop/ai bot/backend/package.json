@@ -7,7 +7,8 @@
     "start": "node chatbot-server.js",
     "dev": "nodemon chatbot-server.js",
     "api": "node server.js",
-    "api:dev": "nodemon server.js"
+    "api:dev": "nodemon server.js",
+    "build": "cd .. && npm run build"
   },
   "keywords": [
     "chatbot",

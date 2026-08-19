@@ -1,3 +1,4 @@
+{
   "name": "appointment-management-system",
   "version": "1.0.0",
   "description": "Appointment Management System — AI Hospital Appointment & CRM Platform",
@@ -5,7 +6,8 @@
   "scripts": {
     "start": "node backend/chatbot-server.js",
     "dev": "nodemon backend/chatbot-server.js",
-    "api": "node backend/server.js"
+    "api": "node backend/server.js",
+    "build": "mkdir -p dist && cp -r frontend/* dist/ && cp hostinger_public_html/.htaccess dist/ 2>/dev/null || true && cd dist && zip -r ../dist.zip . && cd .."
   },
   "keywords": [
     "chatbot",
