@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Hospital Management System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+  <div class="admin-shell">
+    
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <a href="/" class="sidebar-brand" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem; cursor: pointer;" title="Back to Home Page">
+        <div class="brand-icon"><i class="fa-solid fa-hospital"></i></div>
+        <div>
+          <div class="brand-name">Hospital Management System</div>
+          <div class="brand-sub">← Back to Website Home</div>
+        </div>
+      </a>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-tab="overview"><i class="fa-solid fa-chart-pie"></i> Overview</button>
+        <button class="nav-item" data-tab="leads"><i class="fa-solid fa-users"></i> Patient Leads</button>
+        <button class="nav-item" data-tab="voice-calls"><i class="fa-solid fa-phone"></i> Voice Bookings</button>
+        <button class="nav-item" data-tab="email-leads"><i class="fa-solid fa-envelope"></i> Email Inbox</button>
+        <button class="nav-item" data-tab="sms-logs"><i class="fa-solid fa-comment-sms"></i> SMS Logs</button>
+        <button class="nav-item" data-tab="tasks"><i class="fa-solid fa-list-check"></i> Tasks & Actions</button>
+        <button class="nav-item" data-tab="requests"><i class="fa-solid fa-clipboard-user"></i> Patient Requests</button>
+        <button class="nav-item" data-tab="doctors"><i class="fa-solid fa-user-doctor"></i> Doctor Schedules</button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="/" class="btn-sidebar btn-outline"><i class="fa-solid fa-home"></i> Home Website</a>
+        <a href="/chatbot" class="btn-sidebar"><i class="fa-solid fa-comments"></i> Open Chatbot</a>
+        <a href="/voice-call" class="btn-sidebar"><i class="fa-solid fa-phone"></i> Voice Agent</a>
+        <button class="btn-sidebar" id="btn-logout" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.35); color: var(--red); font-weight: 600; cursor: pointer; margin-top: 0.5rem;"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="admin-main">
+
+      <!-- Header -->
+      <header class="admin-header">
+        <div>
+          <h1 id="page-title">Hospital Overview</h1>
+          <p class="header-sub">Real-time access to patient leads, symptoms, appointment details, and tasks.</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn-primary-action" id="open-add-lead-modal"><i class="fa-solid fa-user-plus"></i> + Add Patient Lead</button>
+          <button class="btn-refresh" id="refresh-btn"><i class="fa-solid fa-rotate-right"></i> Refresh Data</button>
+          <span class="db-badge" id="db-status-badge"><i class="fa-solid fa-database"></i> Checking DB...</span>
+        </div>
+      </header>
+
+      <!-- ── TAB 1: OVERVIEW ── -->
+      <div class="tab-content active" id="tab-overview">
+        <!-- KPI Grid -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon blue"><i class="fa-solid fa-user-plus"></i></div>
+            <div>
+              <div class="kpi-label">Total Patient Leads</div>
+              <div class="kpi-val" id="kpi-total-leads">0</div>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon red"><i class="fa-solid fa-fire"></i></div>
+            <div>
+              <div class="kpi-label">Hot Leads (Urgent)</div>
+              <div class="kpi-val" id="kpi-hot-leads">0</div>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon amber"><i class="fa-solid fa-sun"></i></div>
+            <div>
+              <div class="kpi-label">Warm Leads</div>
+              <div class="kpi-val" id="kpi-warm-leads">0</div>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon green"><i class="fa-solid fa-tasks"></i></div>
+            <div>
+              <div class="kpi-label">Total Tasks</div>
+              <div class="kpi-val" id="kpi-total-tasks">0</div>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon blue" style="background: rgba(6, 182, 212, 0.15); color: #06b6d4;"><i class="fa-solid fa-phone"></i></div>
+            <div>
+              <div class="kpi-label">Voice Bookings</div>
+              <div class="kpi-val" id="kpi-total-voice">0</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity Section -->
+        <div class="dashboard-grid">
+          <div class="panel-card" style="grid-column: span 2;">
+            <div class="panel-header">
+              <h3><i class="fa-solid fa-clock-rotate-left"></i> Recent Patient Inquiries & Appointment Requests</h3>
+              <button class="link-btn" onclick="switchTab('leads')">View All Patients</button>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Patient Name</th>
+                    <th>Phone / Contact</th>
+                    <th>Suffering From / Concern</th>
+                    <th>Department & Specialist</th>
+                    <th>Requested Appointment</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="recent-leads-tbody">
+                  <tr><td colspan="7" class="empty-msg">Loading recent patient inquiries...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB 2: PATIENT LEADS ── -->
+      <div class="tab-content" id="tab-leads">
+        <div class="toolbar">
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="search-leads" placeholder="Search patient name, phone, suffering from, or department...">
+          </div>
+          <button class="btn-primary-action" id="open-add-lead-modal-2"><i class="fa-solid fa-user-plus"></i> + Add New Patient</button>
+          <button class="btn-secondary" id="export-leads-btn"><i class="fa-solid fa-download"></i> Export CSV</button>
+        </div>
+
+        <div class="panel-card">
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Patient Name</th>
+                  <th>Contact Info</th>
+                  <th>Suffering From / Symptoms</th>
+                  <th>Department & Specialist</th>
+                  <th>Requested Appointment</th>
+                  <th>Temp</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="all-leads-tbody">
+                <tr><td colspan="8" class="empty-msg">Loading patient details...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB 6: VOICE BOOKINGS ── -->
+      <div class="tab-content" id="tab-voice-calls">
+        <div class="toolbar">
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="search-voice-calls" placeholder="Search by patient name, phone, symptoms, doctor...">
+          </div>
+          <button class="btn-secondary" id="simulate-incoming-call-btn" style="border-color: var(--accent); color: var(--accent); background: rgba(16, 185, 129, 0.05);"><i class="fa-solid fa-phone-volume"></i> Simulate Incoming Call</button>
+        </div>
+
+        <div class="panel-card">
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Call Ref</th>
+                  <th>Patient Name</th>
+                  <th>Phone</th>
+                  <th>Symptoms</th>
+                  <th>Assigned Doctor</th>
+                  <th>Appointment Slot</th>
+                  <th>Status</th>
+                  <th>Urgency</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="all-voice-calls-tbody">
+                <tr><td colspan="10" class="empty-msg">Loading voice bookings...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB 7: PATIENT EMAIL INBOX ── -->
+      <div class="tab-content" id="tab-email-leads">
+        <div class="toolbar">
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="search-email-leads" placeholder="Search sender, email, subject, or AI summary...">
+          </div>
+          <button class="btn-secondary" id="fetch-emails-btn" style="border-color: var(--primary); color: var(--primary); background: rgba(59, 130, 246, 0.05);"><i class="fa-solid fa-sync"></i> Fetch Incoming Patient Emails</button>
+        </div>
+
+        <div class="panel-card">
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Sender</th>
+                  <th>Email</th>
+                  <th>Subject</th>
+                  <th>Classification</th>
+                  <th>AI Extraction Summary</th>
+                  <th>Priority</th>
+                  <th>Date Received</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="all-email-leads-tbody">
+                <tr><td colspan="9" class="empty-msg">No patient emails fetched. Click "Fetch Incoming Patient Emails" to load simulated inbox.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB 8: SMS NOTIFICATION LOGS ── -->
+      <div class="tab-content" id="tab-sms-logs">
+        <div class="toolbar">
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="search-sms-logs" placeholder="Search recipient phone or message content...">
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Recipient Phone</th>
+                  <th>Message Body</th>
+                  <th>Status</th>
+                  <th>Direction</th>
+                  <th>Date Sent</th>
+                </tr>
+              </thead>
+              <tbody id="all-sms-logs-tbody">
+                <tr><td colspan="6" class="empty-msg">No SMS alerts dispatched yet.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB 3: TASKS ── -->
+      <div class="tab-content" id="tab-tasks">
+        <div class="toolbar">
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="search-tasks" placeholder="Search tasks by subject or description...">
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Subject</th>
+                  <th>Priority</th>
+                  <th>Status</th>
+                  <th>Salesforce Task ID</th>
+                  <th>Description</th>
+                  <th>Created</th>
+                </tr>
+              </thead>
+              <tbody id="all-tasks-tbody">
+                <tr><td colspan="7" class="empty-msg">Loading tasks...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB 4: EXISTING PATIENT REQUESTS ── -->
+      <div class="tab-content" id="tab-requests">
+        <div class="toolbar">
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="search-requests" placeholder="Search by patient name, phone, or request type...">
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Patient Name</th>
+                  <th>Phone</th>
+                  <th>Email</th>
+                  <th>Request Type</th>
+                  <th>Details</th>
+                  <th>Matched Record</th>
+                  <th>Created</th>
+                </tr>
+              </thead>
+              <tbody id="all-requests-tbody">
+                <tr><td colspan="8" class="empty-msg">Loading patient requests...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB 5: DOCTOR SCHEDULES ── -->
+      <div class="tab-content" id="tab-doctors">
+        <div class="doctors-grid-admin">
+          <div class="doc-card">
+            <div class="doc-avatar"><i class="fa-solid fa-user-doctor"></i></div>
+            <h3>Dr. Sunita Sharma</h3>
+            <span class="doc-spec">Pediatrics & Child Health</span>
+            <div class="doc-schedule"><i class="fa-solid fa-calendar-days"></i> Mon, Wed, Fri (9:00 AM – 4:00 PM)</div>
+            <div class="doc-status available">Available Today</div>
+          </div>
+          <div class="doc-card">
+            <div class="doc-avatar"><i class="fa-solid fa-user-doctor"></i></div>
+            <h3>Dr. Manoj Kumar</h3>
+            <span class="doc-spec">Dentistry & Oral Surgery</span>
+            <div class="doc-schedule"><i class="fa-solid fa-calendar-days"></i> Mon – Sat (10:00 AM – 6:00 PM)</div>
+            <div class="doc-status available">Available Today</div>
+          </div>
+          <div class="doc-card">
+            <div class="doc-avatar"><i class="fa-solid fa-user-doctor"></i></div>
+            <h3>Dr. Shalini Iyer</h3>
+            <span class="doc-spec">Psychology & Mental Health</span>
+            <div class="doc-schedule"><i class="fa-solid fa-calendar-days"></i> Tue, Thu, Sat (11:00 AM – 5:00 PM)</div>
+            <div class="doc-status available">Available Today</div>
+          </div>
+          <div class="doc-card">
+            <div class="doc-avatar"><i class="fa-solid fa-user-doctor"></i></div>
+            <h3>Dr. Tarun Verma</h3>
+            <span class="doc-spec">Cardiology & Heart Care</span>
+            <div class="doc-schedule"><i class="fa-solid fa-calendar-days"></i> Mon – Fri (8:00 AM – 3:00 PM)</div>
+            <div class="doc-status available">Available Today</div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ── Add Patient Lead Modal ── -->
+  <div class="modal-backdrop" id="lead-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-user-plus"></i> Store New Patient Data</h3>
+        <button class="modal-close" id="close-lead-modal">&times;</button>
+      </div>
+      <form id="add-lead-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label>First Name *</label>
+            <input type="text" id="lead-first-name" required placeholder="e.g. John">
+          </div>
+          <div class="form-group">
+            <label>Last Name *</label>
+            <input type="text" id="lead-last-name" required placeholder="e.g. Doe">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Phone Number *</label>
+            <input type="tel" id="lead-phone" required placeholder="e.g. 555-123-4567">
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="lead-email" placeholder="e.g. john@example.com">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Department / Specialist Doctor</label>
+            <select id="lead-department">
+              <option value="General Consultation">General Consultation ($50)</option>
+              <option value="Pediatrics (Dr. Sunita Sharma)">Pediatrics (Dr. Sunita Sharma) ($80)</option>
+              <option value="Dentistry (Dr. Manoj Kumar)">Dentistry (Dr. Manoj Kumar) ($250)</option>
+              <option value="Cardiology (Dr. Tarun Verma)">Cardiology (Dr. Tarun Verma) ($190)</option>
+              <option value="Psychology (Dr. Shalini Iyer)">Psychology (Dr. Shalini Iyer) ($120)</option>
+              <option value="Diagnostics & Lab Work">Diagnostics & Lab Work ($65)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Lead Temperature</label>
+            <select id="lead-temperature">
+              <option value="Warm">Warm (Standard Appointment Request)</option>
+              <option value="Hot">Hot (Urgent Symptoms / Pain)</option>
+              <option value="Cold">Cold (General Inquiry)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Requested Appointment Date / Time</label>
+          <input type="text" id="lead-date" placeholder="e.g. Tomorrow 10:00 AM">
+        </div>
+        <div class="form-group">
+          <label>Suffering From / Medical Symptoms</label>
+          <textarea id="lead-notes" rows="3" placeholder="Enter what patient is suffering from, symptoms, or medical concern..."></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" id="cancel-lead-modal">Cancel</button>
+          <button type="submit" class="btn-primary-action"><i class="fa-solid fa-check"></i> Save Patient Data</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── View Patient Details & Transcript Modal ── -->
+  <div class="modal-backdrop" id="transcript-modal">
+    <div class="modal-card" style="max-width: 650px;">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-id-card"></i> Patient Details & Chat Transcript</h3>
+        <button class="modal-close" id="close-transcript-modal">&times;</button>
+      </div>
+      <div id="transcript-modal-body">
+        <!-- Content populated via JavaScript -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="close-transcript-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── View Email Details Modal ── -->
+  <div class="modal-backdrop" id="email-detail-modal">
+    <div class="modal-card" style="max-width: 650px;">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-envelope-open"></i> Patient Email Details</h3>
+        <button class="modal-close" id="close-email-modal">&times;</button>
+      </div>
+      <div id="email-modal-body" style="padding: 1rem; display: flex; flex-direction: column; gap: 1rem;">
+        <!-- Content populated via JavaScript -->
+      </div>
+      <div class="modal-footer" style="gap: 0.5rem;">
+        <button class="btn-primary-action" id="convert-email-lead-btn" style="background: var(--success);"><i class="fa-solid fa-user-plus"></i> Convert to CRM Lead</button>
+        <button class="btn-secondary" id="close-email-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Full-Screen Login Modal Overlay ── -->
+  <div class="login-backdrop" id="login-overlay">
+    <div class="login-card">
+      <div class="login-brand">
+        <div class="brand-icon"><i class="fa-solid fa-hospital"></i></div>
+        <div>
+          <div class="brand-name">Hospital Management System</div>
+          <div class="brand-sub">Admin Control Center</div>
+        </div>
+      </div>
+      <h2 class="login-title">Sign In to Dashboard</h2>
+      <form id="login-form">
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" id="login-username" required placeholder="Enter username...">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="login-password" required placeholder="Enter password...">
+        </div>
+        <div id="login-error-msg" class="login-error" style="display:none; color:var(--red); font-size:0.8rem; font-weight:600; margin-bottom:1rem;">
+          Invalid username or password. Please try again.
+        </div>
+        <button type="submit" class="btn-primary-action" style="width:100%; justify-content:center;">
+          <i class="fa-solid fa-sign-in"></i> Access Dashboard
+        </button>
+        <div class="login-helpers" style="margin-top: 1.5rem; font-size: 0.75rem; color: var(--text-muted); line-height: 1.5;">
+          <p><strong>Admin credentials:</strong> admin / admin123</p>
+          <p><strong>User credentials:</strong> user / user123</p>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>

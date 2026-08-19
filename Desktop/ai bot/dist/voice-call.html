@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Voice Receptionist | Hospital Management System</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg-dark: #f8f9fa; /* Soft Gray background */
+      --bg-card: #ffffff; /* White card surface */
+      --bg-panel: #ffffff; /* White panel surface */
+      --primary: #00478d; /* Healing Blue */
+      --primary-glow: rgba(0, 71, 141, 0.1);
+      --accent: #006a6a; /* Trust Teal */
+      --red: #dc2626;
+      --amber: #d97706;
+      --border: #e2e8f0; /* Slate 200 border */
+      --text: #0f172a; /* Slate 900 */
+      --text-muted: #475569; /* Slate 600 */
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined', 'Material Icons', sans-serif !important;
+      font-weight: normal;
+      font-style: normal;
+      font-size: 24px;
+      line-height: 1;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      font-feature-settings: 'liga';
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Navbar */
+    .navbar {
+      background-color: rgba(15, 21, 38, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 1.3rem;
+      color: var(--primary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-weight: 700;
+    }
+
+    .logo i {
+      color: var(--accent);
+      font-size: 1.5rem;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary);
+    }
+
+    .btn-dashboard {
+      background: transparent;
+      border: 1px solid var(--primary);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      color: var(--primary) !important;
+      transition: all 0.3s;
+    }
+
+    .btn-dashboard:hover {
+      background: var(--primary);
+      color: #ffffff !important;
+      box-shadow: 0 0 15px var(--primary-glow);
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1300px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 2rem;
+      flex: 1;
+      width: 100%;
+    }
+
+    @media (max-width: 968px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Glass Panels */
+    .glass-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Phone Simulator Widget */
+    .phone-simulator {
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      min-height: 500px;
+      background: linear-gradient(145deg, #f1f5f9 0%, #e2e8f0 100%);
+    }
+
+    .phone-header {
+      margin-bottom: 2rem;
+      width: 100%;
+    }
+
+    .phone-status {
+      display: inline-block;
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      transition: all 0.3s;
+    }
+
+    .phone-status.active {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent);
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+    }
+
+    .phone-status.ringing {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--amber);
+      animation: pulse-ring 1.5s infinite;
+    }
+
+    .phone-status.ended {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--red);
+    }
+
+    .phone-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: rgba(59, 130, 246, 0.07);
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      color: var(--primary);
+      margin: 1.5rem auto;
+      position: relative;
+      transition: all 0.3s;
+    }
+
+    .phone-avatar.active {
+      border-color: var(--primary);
+      box-shadow: 0 0 30px rgba(59, 130, 246, 0.25);
+    }
+
+    /* Soundwave Animation */
+    .wave-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      height: 40px;
+      margin: 1.5rem 0;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .wave-container.active {
+      opacity: 1;
+    }
+
+    .wave-bar {
+      width: 4px;
+      height: 15px;
+      background-color: var(--primary);
+      border-radius: 2px;
+      animation: sound-wave 1.2s ease-in-out infinite alternate;
+    }
+
+    .wave-bar:nth-child(2) { animation-delay: 0.15s; height: 25px; background-color: #5b97f7; }
+    .wave-bar:nth-child(3) { animation-delay: 0.3s; height: 35px; background-color: var(--accent); }
+    .wave-bar:nth-child(4) { animation-delay: 0.45s; height: 20px; background-color: #5b97f7; }
+    .wave-bar:nth-child(5) { animation-delay: 0.6s; height: 10px; background-color: var(--primary); }
+
+    /* Call Controls */
+    .call-controls {
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      width: 100%;
+    }
+
+    .btn-phone {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s;
+    }
+
+    .btn-phone.call {
+      background: var(--accent);
+    }
+
+    .btn-phone.call:hover {
+      transform: scale(1.08);
+      box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-phone.hangup {
+      background: var(--red);
+    }
+
+    .btn-phone.hangup:hover {
+      transform: scale(1.08);
+      box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4);
+    }
+
+    /* Toggle Mode Selector */
+    .mode-selector {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      padding: 0.3rem;
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .btn-mode {
+      background: transparent;
+      border: none;
+      padding: 0.4rem 1.2rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .btn-mode.active {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    /* Fallback Chat input style */
+    .input-console {
+      width: 100%;
+      margin-top: 1.5rem;
+      display: none;
+      gap: 0.75rem;
+    }
+
+    .input-console.active {
+      display: flex;
+    }
+
+    .input-console input {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      color: #fff;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .input-console input:focus {
+      border-color: var(--primary);
+    }
+
+    .btn-send {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 0 1.2rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .btn-send:hover {
+      box-shadow: 0 0 10px var(--primary-glow);
+    }
+
+    /* Right Console - Live Extractor & Transcript */
+    .console-right {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .extraction-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.75rem;
+    }
+
+    .extraction-header h3 {
+      font-size: 1.15rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .extraction-header h3 i {
+      color: var(--accent);
+    }
+
+    /* Details Grid */
+    .extraction-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 480px) {
+      .extraction-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .ext-field {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .ext-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .ext-val {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #fff;
+    }
+
+    .ext-val.empty {
+      color: var(--text-muted);
+      font-weight: 400;
+      font-style: italic;
+    }
+
+    .temp-badge {
+      display: inline-block;
+      align-self: flex-start;
+      padding: 0.1rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .temp-badge.hot { background: rgba(239, 68, 68, 0.15); color: var(--red); }
+    .temp-badge.warm { background: rgba(245, 158, 11, 0.15); color: var(--amber); }
+    .temp-badge.cold { background: rgba(59, 130, 246, 0.15); color: var(--primary); }
+
+    /* Live Transcript */
+    .transcript-box {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.15);
+      flex: 1;
+      min-height: 220px;
+      max-height: 300px;
+      overflow-y: auto;
+      padding: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .bubble {
+      max-width: 80%;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      position: relative;
+    }
+
+    .bubble.bot {
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      color: #fff;
+      align-self: flex-start;
+      border-bottom-left-radius: 2px;
+    }
+
+    .bubble.patient {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: #fff;
+      align-self: flex-end;
+      border-bottom-right-radius: 2px;
+    }
+
+    .bubble-sender {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .empty-transcript {
+      text-align: center;
+      color: var(--text-muted);
+      font-style: italic;
+      margin-top: auto;
+      margin-bottom: auto;
+      font-size: 0.9rem;
+    }
+
+    /* Testing guidelines */
+    .guidelines-card {
+      margin-top: 1.5rem;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.2rem;
+    }
+
+    .guidelines-card h4 {
+      font-size: 0.95rem;
+      color: #fff;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .guidelines-card h4 i {
+      color: var(--amber);
+    }
+
+    .guidelines-card ul {
+      list-style-type: none;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .guidelines-card ul li {
+      position: relative;
+      padding-left: 1.2rem;
+    }
+
+    .guidelines-card ul li::before {
+      content: "➔";
+      position: absolute;
+      left: 0;
+      color: var(--primary);
+    }
+
+    /* Booking Confirmed Popup Overlay */
+    .booking-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 21, 38, 0.95);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      text-align: center;
+      z-index: 10;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s;
+    }
+
+    .booking-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .success-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: rgba(16, 185, 129, 0.15);
+      border: 2px solid var(--accent);
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      animation: scale-up 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .success-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+
+    .success-text {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      max-width: 320px;
+    }
+
+    .appointment-ref-box {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 2rem;
+    }
+
+    .btn-finish {
+      background: var(--primary);
+      border: none;
+      padding: 0.75rem 2rem;
+      border-radius: 8px;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-finish:hover {
+      box-shadow: 0 0 15px var(--primary-glow);
+    }
+
+    /* Animations */
+    @keyframes sound-wave {
+      0% { transform: scaleY(0.4); }
+      100% { transform: scaleY(1.4); }
+    }
+
+    @keyframes pulse-ring {
+      0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+      70% { box-shadow: 0 0 0 12px rgba(245, 158, 11, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+    }
+
+    /* SMS Notification Popup */
+    .sms-toast {
+      position: absolute;
+      bottom: -150px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 21, 38, 0.95);
+      border: 1.5px solid var(--primary);
+      border-radius: 12px;
+      width: 90%;
+      max-width: 320px;
+      padding: 0.8rem 1rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6), 0 0 15px var(--primary-glow);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+
+    .sms-toast.show {
+      bottom: 1.5rem;
+    }
+
+    .sms-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      color: var(--primary);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .sms-sender {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .sms-time {
+      color: var(--text-muted);
+      font-weight: normal;
+    }
+
+    .sms-body {
+      font-size: 0.82rem;
+      line-height: 1.4;
+      color: #e2e8f0;
+    }
+  </style>
+  <!-- Navbar matching Landing Page & Chatbot -->
+  <header style="position: sticky; top: 0; z-index: 100; background-color: #ffffff; border-bottom: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); width: 100%; height: 70px;">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 0 1.5rem; height: 100%; display: flex; align-items: center; justify-content: space-between;">
+      <a href="/" style="display: flex; align-items: center; gap: 0.65rem; text-decoration: none; color: #00478d; font-weight: 700; font-size: 1.25rem;" title="Hospital Management System Home">
+        <span class="material-symbols-outlined" style="font-size: 26px; color: #00478d;">medical_services</span>
+        <span>Hospital Management System</span>
+      </a>
+      <nav style="display: flex; align-items: center; gap: 2rem;">
+        <a href="/" style="text-decoration: none; font-size: 0.9rem; font-weight: 500; color: #424752;">Home</a>
+        <a href="/chatbot" style="text-decoration: none; font-size: 0.9rem; font-weight: 500; color: #424752;">AI Chatbot</a>
+        <a href="/voice-call" style="text-decoration: none; font-size: 0.9rem; font-weight: 600; color: #00478d; border-bottom: 2px solid #00478d; padding-bottom: 2px;">Voice Call Agent</a>
+        <a href="/admin" style="text-decoration: none; font-size: 0.9rem; font-weight: 500; color: #424752;">Admin Portal</a>
+      </nav>
+      <button style="background-color: #ba1a1a; color: #ffffff; border: none; border-radius: 9999px; padding: 0.5rem 1.1rem; font-size: 0.875rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem; cursor: pointer;" onclick="window.location.href='tel:911'">
+        <span class="material-symbols-outlined" style="font-size: 18px;">emergency</span>
+        Emergency: 911
+      </button>
+    </div>
+  </header>
+
+  <!-- Content Container -->
+  <div class="container">
+    
+    <!-- Left: Phone Simulator UI -->
+    <div class="glass-card phone-simulator">
+      
+      <!-- Booking overlay -->
+      <div class="booking-overlay" id="booking-popup">
+        <div class="success-icon"><i class="fa-solid fa-check"></i></div>
+        <div class="success-title">Booking Confirmed!</div>
+        <div class="success-text" id="booking-msg">Your appointment has been successfully stored in the hospital records.</div>
+        <div class="appointment-ref-box" id="booking-ref">APT-VOICE-0000</div>
+        <button class="btn-finish" id="btn-restart-call">Make New Call</button>
+      </div>
+
+      <!-- SMS toast simulator -->
+      <div class="sms-toast" id="sms-toast-overlay">
+        <div class="sms-header">
+          <span class="sms-sender"><i class="fa-solid fa-comment-sms"></i> MESSAGES</span>
+          <span class="sms-time" id="sms-toast-time">Just Now</span>
+        </div>
+        <div class="sms-body" id="sms-toast-body">
+          Hospital Management System Alert: Your appointment is confirmed.
+        </div>
+      </div>
+
+      <div class="phone-header">
+        <div class="phone-status" id="call-status-badge">Offline</div>
+      </div>
+
+      <div class="phone-avatar" id="phone-avatar-glow">
+        <i class="fa-solid fa-phone"></i>
+      </div>
+
+      <h2 style="font-size: 1.4rem; font-weight: 600; margin-bottom: 0.2rem;" id="phone-display-title">AI Receptionist Bot</h2>
+      <p style="font-size: 0.9rem; color: var(--text-muted);" id="phone-display-sub">Aria - Virtual Assistant</p>
+
+      <!-- Language Selector Selection -->
+      <div style="margin: 0.75rem 0; display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
+        <label style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 600;">Preferred Language / భాష:</label>
+        <select id="lang-pref-select" style="background: var(--bg-dark); border: 1px solid var(--border); color: var(--text); padding: 0.3rem 0.65rem; border-radius: 8px; font-size: 0.8rem; font-weight: 500; outline: none; cursor: pointer;">
+          <option value="en">English (US)</option>
+          <option value="te">తెలుగు (Telugu)</option>
+        </select>
+      </div>
+
+      <!-- Equalizer Visual -->
+      <div class="wave-container" id="sound-equalizer">
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+      </div>
+
+      <div class="call-controls">
+        <button class="btn-phone call" id="btn-toggle-call" title="Start Call">
+          <i class="fa-solid fa-phone-alt"></i>
+        </button>
+
+        <div class="mode-selector">
+          <button class="btn-mode active" id="btn-mode-voice" data-mode="voice"><i class="fa-solid fa-microphone"></i> Voice Mode</button>
+          <button class="btn-mode" id="btn-mode-text" data-mode="text"><i class="fa-solid fa-keyboard"></i> Text Mode</button>
+        </div>
+
+        <!-- Fallback Console Input -->
+        <div class="input-console" id="text-input-console">
+          <input type="text" id="patient-text-input" placeholder="Type message to AI agent...">
+          <button class="btn-send" id="btn-send-text">Send</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right: Extractor Panel & Live Transcript -->
+    <div class="console-right">
+      
+      <!-- Extraction Widget -->
+      <div class="glass-card">
+        <div class="extraction-header">
+          <h3><i class="fa-solid fa-brain"></i> AI CRM Live Extractor</h3>
+          <span style="font-size: 0.8rem; background: rgba(59, 130, 246, 0.1); color: var(--primary); padding: 0.2rem 0.6rem; border-radius: 4px;" id="extractor-session">No active call</span>
+        </div>
+
+        <div class="extraction-grid">
+          <div class="ext-field">
+            <span class="ext-label">Patient Name</span>
+            <span class="ext-val empty" id="ext-name">Waiting...</span>
+          </div>
+          <div class="ext-field">
+            <span class="ext-label">Caller Phone</span>
+            <span class="ext-val empty" id="ext-phone">Waiting...</span>
+          </div>
+          <div class="ext-field" style="grid-column: span 2;">
+            <span class="ext-label">Suffering / Symptoms</span>
+            <span class="ext-val empty" id="ext-symptoms">Waiting...</span>
+          </div>
+          <div class="ext-field">
+            <span class="ext-label">Specialist Doctor</span>
+            <span class="ext-val empty" id="ext-doctor">Waiting...</span>
+          </div>
+          <div class="ext-field">
+            <span class="ext-label">Department</span>
+            <span class="ext-val empty" id="ext-dept">Waiting...</span>
+          </div>
+          <div class="ext-field">
+            <span class="ext-label">Appointment Date</span>
+            <span class="ext-val empty" id="ext-date">Waiting...</span>
+          </div>
+          <div class="ext-field">
+            <span class="ext-label">Appointment Time</span>
+            <span class="ext-val empty" id="ext-time">Waiting...</span>
+          </div>
+          <div class="ext-field">
+            <span class="ext-label">Urgency Temperature</span>
+            <span class="ext-val empty" id="ext-urgency">Waiting...</span>
+          </div>
+          <div class="ext-field">
+            <span class="ext-label">Call Reference ID</span>
+            <span class="ext-val empty" id="ext-ref">Waiting...</span>
+          </div>
+        </div>
+
+        <!-- Live Dialogue Transcript -->
+        <h4 style="font-size: 0.95rem; font-weight: 600; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem;">
+          <i class="fa-solid fa-list-ul" style="color: var(--primary);"></i> Call Dialogue Transcript
+        </h4>
+        <div class="transcript-box" id="chat-transcript">
+          <div class="empty-transcript" id="empty-transcript-msg">Call not connected. Click phone button to start speaking.</div>
+        </div>
+      </div>
+
+      <!-- Guidelines Widget -->
+      <div class="guidelines-card">
+        <h4><i class="fa-solid fa-lightbulb"></i> Guidelines to test AI Agent:</h4>
+        <ul>
+          <li><strong>Step 1:</strong> Start call. The AI Receptionist will greet you and ask for details.</li>
+          <li><strong>Step 2:</strong> State your name and reason for calling (e.g. "I am Sarah Carter, I have child with high fever").</li>
+          <li><strong>Step 3:</strong> The AI extracts symptoms, matches specialized doctor (Pediatrician) and suggests date/time.</li>
+          <li><strong>Step 4:</strong> Agree or customize slot (e.g. "Yes, tomorrow morning works" or "I want Friday at 2:00 PM").</li>
+          <li><strong>Step 5:</strong> Confirm the booking when AI asks to complete the reservation!</li>
+        </ul>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    // State Variables
+    let isCallActive = false;
+    let callSessionId = '';
+    let currentMode = 'voice'; // 'voice' or 'text'
+    let speakVoices = [];
+    let recognition = null;
+    let isBotSpeaking = false;
+    let isWaitingForResponse = false;
+    let currentCallerPhone = '';
+
+    // Elements
+    const btnToggleCall = document.getElementById('btn-toggle-call');
+    const badgeCallStatus = document.getElementById('call-status-badge');
+    const phoneAvatar = document.getElementById('phone-avatar-glow');
+    const soundEqualizer = document.getElementById('sound-equalizer');
+    const textInputConsole = document.getElementById('text-input-console');
+    const patientTextInput = document.getElementById('patient-text-input');
+    const btnSendText = document.getElementById('btn-send-text');
+    const chatTranscript = document.getElementById('chat-transcript');
+    const emptyTranscriptMsg = document.getElementById('empty-transcript-msg');
+    const phoneDisplayTitle = document.getElementById('phone-display-title');
+    const phoneDisplaySub = document.getElementById('phone-display-sub');
+
+    // Mode Buttons
+    const btnModeVoice = document.getElementById('btn-mode-voice');
+    const btnModeText = document.getElementById('btn-mode-text');
+
+    // Extractor Elements
+    const labelSession = document.getElementById('extractor-session');
+    const extName = document.getElementById('ext-name');
+    const extPhone = document.getElementById('ext-phone');
+    const extSymptoms = document.getElementById('ext-symptoms');
+    const extDoctor = document.getElementById('ext-doctor');
+    const extDept = document.getElementById('ext-dept');
+    const extDate = document.getElementById('ext-date');
+    const extTime = document.getElementById('ext-time');
+    const extUrgency = document.getElementById('ext-urgency');
+    const extRef = document.getElementById('ext-ref');
+
+    // Booking popup elements
+    const bookingPopup = document.getElementById('booking-popup');
+    const bookingMsg = document.getElementById('booking-msg');
+    const bookingRef = document.getElementById('booking-ref');
+    const btnRestartCall = document.getElementById('btn-restart-call');
+
+    // Generate random 10-digit phone for session simulating real call From twilio
+    function generateRandomPhone() {
+      const parts = [
+        Math.floor(200 + Math.random() * 800),
+        Math.floor(200 + Math.random() * 800),
+        Math.floor(1000 + Math.random() * 9000)
+      ];
+      return `+1 (${parts[0]}) ${parts[1]}-${parts[2]}`;
+    }
+
+    // Initialize voices list
+    function initSpeechSynthesis() {
+      if ('speechSynthesis' in window) {
+        speakVoices = window.speechSynthesis.getVoices();
+        window.speechSynthesis.onvoiceschanged = () => {
+          speakVoices = window.speechSynthesis.getVoices();
+        };
+      }
+    }
+    initSpeechSynthesis();
+
+    let currentAudioPlayback = null;
+
+    // Speak Text aloud using High-Fidelity Audio / SpeechSynthesis
+    function speakText(text, callback) {
+      if (!text) {
+        if (callback) callback();
+        return;
+      }
+
+      const selectedLanguage = document.getElementById('lang-pref-select').value || 'en';
+
+      if (currentAudioPlayback) {
+        try {
+          currentAudioPlayback.pause();
+          currentAudioPlayback.currentTime = 0;
+        } catch(e) {}
+        currentAudioPlayback = null;
+      }
+
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+
+      // If Telugu is selected, use high-fidelity natural human Telugu voice stream
+      if (selectedLanguage === 'te') {
+        const audioUrl = 'https://translate.google.com/translate_tts?ie=UTF-8&tl=te&client=tw-ob&q=' + encodeURIComponent(text);
+        const audio = new Audio(audioUrl);
+        currentAudioPlayback = audio;
+
+        let hasFinished = false;
+        const done = () => {
+          if (!hasFinished) {
+            hasFinished = true;
+            isBotSpeaking = false;
+            animateEqualizer(false);
+            currentAudioPlayback = null;
+            if (callback) callback();
+          }
+        };
+
+        audio.onplay = () => {
+          isBotSpeaking = true;
+          animateEqualizer(true);
+        };
+
+        audio.onended = () => {
+          done();
+        };
+
+        audio.onerror = () => {
+          console.warn('Online Telugu TTS failed, falling back to Web Speech Synthesis.');
+          fallbackSpeechSynthesis(text, selectedLanguage, callback);
+        };
+
+        audio.play().catch(err => {
+          console.warn('Audio play restricted or failed, falling back to SpeechSynthesis:', err);
+          fallbackSpeechSynthesis(text, selectedLanguage, callback);
+        });
+        return;
+      }
+
+      fallbackSpeechSynthesis(text, selectedLanguage, callback);
+    }
+
+    function fallbackSpeechSynthesis(text, selectedLanguage, callback) {
+      if (!('speechSynthesis' in window)) {
+        if (callback) callback();
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = selectedLanguage === 'te' ? 'te-IN' : 'en-US';
+
+      let selectedVoice = null;
+      if (selectedLanguage === 'te') {
+        selectedVoice = speakVoices.find(v => v.lang.startsWith('te') || v.name.includes('Telugu') || v.name.includes('India'));
+      } else {
+        selectedVoice = speakVoices.find(v => v.name.includes('Google US English') || v.name.includes('Zira') || v.name.includes('Samantha') || v.name.includes('Moira'));
+      }
+
+      if (!selectedVoice && speakVoices.length > 0 && selectedLanguage !== 'te') {
+        selectedVoice = speakVoices.find(v => v.lang.startsWith('en')) || speakVoices[0];
+      }
+      if (selectedVoice) utterance.voice = selectedVoice;
+
+      utterance.rate = 0.95;
+      utterance.pitch = 1.0;
+
+      utterance.onstart = () => {
+        isBotSpeaking = true;
+        animateEqualizer(true);
+      };
+
+      utterance.onend = () => {
+        isBotSpeaking = false;
+        animateEqualizer(false);
+        if (callback) callback();
+      };
+
+      utterance.onerror = (e) => {
+        console.error('SpeechSynthesis error:', e);
+        isBotSpeaking = false;
+        animateEqualizer(false);
+        if (callback) callback();
+      };
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    // Initialize Web Speech Recognition
+    function initSpeechRecognition() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        console.warn('SpeechRecognition API not supported in this browser.');
+        return;
+      }
+
+      recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'en-US';
+
+      recognition.onstart = () => {
+        badgeCallStatus.textContent = "Listening...";
+        badgeCallStatus.className = "phone-status active";
+        phoneAvatar.classList.add('active');
+        animateEqualizer(true);
+      };
+
+      recognition.onresult = (event) => {
+        const text = event.results[0][0].transcript;
+        console.log('Speech result:', text);
+        if (text && text.trim() !== '') {
+          addTranscriptBubble(text, 'patient');
+          sendInputToBackend(text);
+        }
+      };
+
+      recognition.onerror = (event) => {
+        console.error('SpeechRecognition error:', event.error);
+        if (event.error !== 'no-speech') {
+          badgeCallStatus.textContent = "Voice Active";
+        }
+      };
+
+      recognition.onend = () => {
+        animateEqualizer(false);
+        phoneAvatar.classList.remove('active');
+        // Restart listening if call is active, bot is not talking, and we are not waiting for response
+        if (isCallActive && !isBotSpeaking && !isWaitingForResponse && currentMode === 'voice') {
+          setTimeout(() => {
+            if (isCallActive && !isBotSpeaking && !isWaitingForResponse && currentMode === 'voice') {
+              startRecognition();
+            }
+          }, 800);
+        }
+      };
+    }
+    initSpeechRecognition();
+
+    function startRecognition() {
+      if (recognition) {
+        const selectedLanguage = document.getElementById('lang-pref-select').value || 'en';
+        recognition.lang = selectedLanguage === 'te' ? 'te-IN' : 'en-US';
+        try { recognition.start(); } catch(e){}
+      }
+    }
+
+    // UI Helpers
+    function animateEqualizer(active) {
+      if (active) {
+        soundEqualizer.classList.add('active');
+      } else {
+        soundEqualizer.classList.remove('active');
+      }
+    }
+
+    function addTranscriptBubble(text, sender) {
+      if (emptyTranscriptMsg) {
+        emptyTranscriptMsg.style.display = 'none';
+      }
+
+      const bubble = document.createElement('div');
+      bubble.className = `bubble ${sender}`;
+      
+      const senderLabel = document.createElement('div');
+      senderLabel.className = 'bubble-sender';
+      senderLabel.textContent = sender === 'bot' ? 'Aria (AI)' : 'Patient (You)';
+      
+      const textContent = document.createElement('div');
+      textContent.textContent = text;
+      
+      bubble.appendChild(senderLabel);
+      bubble.appendChild(textContent);
+      chatTranscript.appendChild(bubble);
+      
+      // Scroll to bottom
+      chatTranscript.scrollTop = chatTranscript.scrollHeight;
+    }
+
+    function updateExtractorFields(session, callRef, aptId) {
+      if (!session) return;
+      
+      extName.textContent = session.patientName || 'Waiting...';
+      extName.className = session.patientName ? 'ext-val' : 'ext-val empty';
+
+      extPhone.textContent = session.callerPhone || 'Waiting...';
+      extPhone.className = session.callerPhone ? 'ext-val' : 'ext-val empty';
+
+      extSymptoms.textContent = session.symptoms || 'Waiting...';
+      extSymptoms.className = session.symptoms ? 'ext-val' : 'ext-val empty';
+
+      extDoctor.textContent = session.doctorAssigned || 'Waiting...';
+      extDoctor.className = session.doctorAssigned ? 'ext-val' : 'ext-val empty';
+
+      extDept.textContent = session.department || 'Waiting...';
+      extDept.className = session.department ? 'ext-val' : 'ext-val empty';
+
+      extDate.textContent = session.preferredDate || 'Waiting...';
+      extDate.className = session.preferredDate ? 'ext-val' : 'ext-val empty';
+
+      extTime.textContent = session.preferredTime || 'Waiting...';
+      extTime.className = session.preferredTime ? 'ext-val' : 'ext-val empty';
+
+      if (session.urgency) {
+        extUrgency.innerHTML = `<span class="temp-badge ${session.urgency.toLowerCase()}">${session.urgency}</span>`;
+      } else {
+        extUrgency.textContent = 'Waiting...';
+        extUrgency.className = 'ext-val empty';
+      }
+
+      extRef.textContent = aptId || 'Waiting...';
+      extRef.className = aptId ? 'ext-val' : 'ext-val empty';
+    }
+
+    function clearExtractorFields() {
+      extName.textContent = 'Waiting...'; extName.className = 'ext-val empty';
+      extPhone.textContent = 'Waiting...'; extPhone.className = 'ext-val empty';
+      extSymptoms.textContent = 'Waiting...'; extSymptoms.className = 'ext-val empty';
+      extDoctor.textContent = 'Waiting...'; extDoctor.className = 'ext-val empty';
+      extDept.textContent = 'Waiting...'; extDept.className = 'ext-val empty';
+      extDate.textContent = 'Waiting...'; extDate.className = 'ext-val empty';
+      extTime.textContent = 'Waiting...'; extTime.className = 'ext-val empty';
+      extUrgency.textContent = 'Waiting...'; extUrgency.className = 'ext-val empty';
+      extRef.textContent = 'Waiting...'; extRef.className = 'ext-val empty';
+    }
+
+    // Toggle call controls
+    btnToggleCall.addEventListener('click', () => {
+      if (!isCallActive) {
+        startCall();
+      } else {
+        hangUpCall();
+      }
+    });
+
+    // Start simulated call
+    function startCall() {
+      isCallActive = true;
+      callSessionId = 'vses_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
+      currentCallerPhone = generateRandomPhone();
+      
+      btnToggleCall.className = "btn-phone hangup";
+      btnToggleCall.innerHTML = '<i class="fa-solid fa-phone-slash"></i>';
+      btnToggleCall.title = "Hang Up";
+
+      badgeCallStatus.textContent = "Connecting...";
+      badgeCallStatus.className = "phone-status ringing";
+      phoneDisplayTitle.textContent = "Calling AI Receptionist...";
+      
+      labelSession.textContent = `Live Session: ${callSessionId.substring(0, 10)}...`;
+      clearExtractorFields();
+      chatTranscript.innerHTML = '';
+      if (emptyTranscriptMsg) emptyTranscriptMsg.style.display = 'none';
+
+      // Simulate network delay for calling connection
+      setTimeout(() => {
+        if (!isCallActive) return;
+        badgeCallStatus.textContent = "Call Connected";
+        badgeCallStatus.className = "phone-status active";
+        phoneDisplayTitle.textContent = "Aria (AI Voice Bot)";
+        phoneDisplaySub.textContent = `Call Active: ${currentCallerPhone}`;
+
+        // Initialize with greeting
+        sendInputToBackend(''); 
+      }, 1200);
+    }
+
+    // Hangup call
+    function hangUpCall() {
+      isCallActive = false;
+      if (currentAudioPlayback) {
+        try { currentAudioPlayback.pause(); currentAudioPlayback.currentTime = 0; } catch(e){}
+        currentAudioPlayback = null;
+      }
+      if (recognition) {
+        try { recognition.stop(); } catch(e){}
+      }
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+
+      btnToggleCall.className = "btn-phone call";
+      btnToggleCall.innerHTML = '<i class="fa-solid fa-phone-alt"></i>';
+      btnToggleCall.title = "Start Call";
+
+      badgeCallStatus.textContent = "Offline";
+      badgeCallStatus.className = "phone-status ended";
+      phoneDisplayTitle.textContent = "AI Receptionist Bot";
+      phoneDisplaySub.textContent = "Aria - Virtual Assistant";
+      animateEqualizer(false);
+      phoneAvatar.classList.remove('active');
+    }
+
+    // Mode toggle functionality
+    btnModeVoice.addEventListener('click', () => {
+      currentMode = 'voice';
+      btnModeVoice.classList.add('active');
+      btnModeText.classList.remove('active');
+      textInputConsole.classList.remove('active');
+      
+      if (isCallActive && !isBotSpeaking && recognition) {
+        try { recognition.start(); } catch(e){}
+      }
+    });
+
+    btnModeText.addEventListener('click', () => {
+      currentMode = 'text';
+      btnModeText.classList.add('active');
+      btnModeVoice.classList.remove('active');
+      textInputConsole.classList.add('active');
+      
+      if (recognition) {
+        try { recognition.stop(); } catch(e){}
+      }
+    });
+
+    // Handle Text Send
+    btnSendText.addEventListener('click', () => {
+      handleTextSubmission();
+    });
+
+    patientTextInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        handleTextSubmission();
+      }
+    });
+
+    function handleTextSubmission() {
+      const text = patientTextInput.value.trim();
+      if (text === '') return;
+      
+      addTranscriptBubble(text, 'patient');
+      patientTextInput.value = '';
+      
+      sendInputToBackend(text);
+    }
+
+    // Backend Connection
+    async function sendInputToBackend(userInput) {
+      if (!isCallActive) return;
+
+      isWaitingForResponse = true;
+      if (recognition) {
+        try { recognition.stop(); } catch(e){}
+      }
+
+      try {
+        const response = await fetch('/api/voice-call/process', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            sessionId: callSessionId,
+            userInput: userInput,
+            callerPhone: currentCallerPhone,
+            language: document.getElementById('lang-pref-select').value || 'en'
+          })
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+          // Display bot reply
+          addTranscriptBubble(data.voiceResponse, 'bot');
+          
+          // Update extractor board
+          updateExtractorFields(data.session, data.callReference, data.appointmentId);
+
+          // Speak reply
+          speakText(data.voiceResponse, () => {
+            isWaitingForResponse = false;
+            
+            // End call if finished or emergency, otherwise continue listening
+            if (!isCallActive) return;
+
+            if (data.isBooked) {
+              setTimeout(() => {
+                showBookingConfirmation(data.voiceResponse, data.appointmentId);
+              }, 1000);
+            } else if (data.isEmergency) {
+              hangUpCall();
+            } else if (currentMode === 'voice') {
+              startRecognition();
+            }
+          });
+        } else {
+          isWaitingForResponse = false;
+          console.error('API Error:', data.error);
+        }
+      } catch (err) {
+        isWaitingForResponse = false;
+        console.error('Fetch error:', err);
+        addTranscriptBubble("I apologize, but we are experiencing system connectivity issues. Please try again.", 'bot');
+        speakText("I apologize, but we are experiencing system connectivity issues. Please try again.", () => {
+          if (isCallActive && currentMode === 'voice') {
+            startRecognition();
+          }
+        });
+      }
+    }
+
+    // Booking confirmed popup
+    function showBookingConfirmation(aiMsg, aptId) {
+      bookingRef.textContent = aptId;
+      bookingMsg.textContent = `Aria successfully confirmed your slot! Details have been synced into Salesforce and hospital records. Call details saved under Ref: ${aptId}`;
+      bookingPopup.classList.add('active');
+
+      // Trigger simulated mobile phone SMS toast notification
+      const smsToast = document.getElementById('sms-toast-overlay');
+      const smsToastBody = document.getElementById('sms-toast-body');
+      const smsToastTime = document.getElementById('sms-toast-time');
+      
+      if (smsToast && smsToastBody && smsToastTime) {
+        const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        smsToastTime.textContent = timeStr;
+        smsToastBody.textContent = `Hospital Management System Alert: Your appointment has been booked successfully. Code: ${aptId}. Specialist details synced to CRM dashboard.`;
+        smsToast.classList.add('show');
+        
+        // Auto-hide the SMS toast after 8 seconds
+        setTimeout(() => {
+          smsToast.classList.remove('show');
+        }, 8000);
+      }
+    }
+
+    btnRestartCall.addEventListener('click', () => {
+      bookingPopup.classList.remove('active');
+      const smsToast = document.getElementById('sms-toast-overlay');
+      if (smsToast) smsToast.classList.remove('show');
+      hangUpCall();
+      startCall();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+RewriteEngine On
+RewriteBase /
+
+# Route /chatbot to chatbot.html
+RewriteRule ^chatbot/?$ chatbot.html [L]
+
+# Route /voice-call to voice-call.html
+RewriteRule ^voice-call/?$ voice-call.html [L]
+
+# Route /admin to admin.html
+RewriteRule ^admin/?$ admin.html [L]
+
+# Allow direct file access if it exists
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.html [L]
