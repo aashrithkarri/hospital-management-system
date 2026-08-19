@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Health Assistant | Surekha Hospital</title>
+  <meta name="description" content="Chat with our LangGraph-powered AI health assistant. Get instant answers about services, appointments, and clinic information." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="chatbot.css" />
+</head>
+<body>
+
+  <!-- Error toast -->
+  <div class="error-toast" id="error-toast" role="alert" aria-live="assertive"></div>
+
+  <div class="chat-shell">
+
+    <!-- ── Sidebar ─────────────────────────────────────────────── -->
+    <aside class="sidebar" aria-label="Chat sidebar">
+
+      <!-- Brand -->
+      <div class="sidebar-brand">
+        <div class="brand-icon" aria-hidden="true">✦</div>
+        <div>
+          <div class="brand-name">Surekha Hospital</div>
+          <div class="brand-sub">AI Health Assistant</div>
+        </div>
+      </div>
+
+      <!-- Agent Status -->
+      <div class="status-card" aria-label="Agent status">
+        <div class="status-row">
+          <div class="status-dot checking" id="agent-dot"></div>
+          <span class="status-label" id="agent-status-text">Connecting…</span>
+        </div>
+        <div class="status-row">
+          <div class="status-dot" style="background:#6366f1;box-shadow:0 0 6px #6366f1"></div>
+          <span>Model: <strong style="color:#a5b4fc">GPT-4o-mini</strong></span>
+        </div>
+        <div class="status-row">
+          <div class="status-dot" style="background:#2dd4bf;box-shadow:0 0 6px #2dd4bf"></div>
+          <span>Framework: <strong style="color:#5eead4">LangGraph</strong></span>
+        </div>
+      </div>
+
+      <!-- Session Info -->
+      <div class="session-card" aria-label="Session information">
+        <h4>Session</h4>
+        <div class="session-info-row">
+          <span>Session ID</span>
+          <span id="sid-display">—</span>
+        </div>
+        <div class="session-info-row">
+          <span>Turns</span>
+          <span id="turn-count">0</span>
+        </div>
+        <div class="session-info-row">
+          <span>Total Tokens</span>
+          <span id="session-tokens">0</span>
+        </div>
+        <div class="session-info-row">
+          <span>Avg Latency</span>
+          <span id="session-latency">—</span>
+        </div>
+        <button class="btn-clear" id="btn-clear-session" aria-label="Clear session and start new chat">
+          🗑 New Chat
+        </button>
+      </div>
+
+      <!-- Quick prompts -->
+      <div class="tips-card" aria-label="Suggested questions">
+        <h4>Try asking</h4>
+        <span class="tip-chip" data-prompt="What services do you offer?">Services & Pricing</span>
+        <span class="tip-chip" data-prompt="What are your clinic hours?">Clinic Hours</span>
+        <span class="tip-chip" data-prompt="How do I book an appointment?">Book Appointment</span>
+        <span class="tip-chip" data-prompt="Which insurance plans do you accept?">Insurance</span>
+        <span class="tip-chip" data-prompt="Tell me about your doctors">Our Specialists</span>
+        <span class="tip-chip" data-prompt="What is your cancellation policy?">Cancellation Policy</span>
+      </div>
+
+    </aside>
+
+    <!-- ── Main Chat Panel ──────────────────────────────────────── -->
+    <main class="chat-main" aria-label="Chat interface">
+
+      <!-- Header -->
+      <header class="chat-header">
+        <div class="chat-header-left">
+          <div class="agent-avatar" aria-hidden="true">🤖</div>
+          <div>
+            <div class="agent-name">Aria — Health Assistant</div>
+            <div class="agent-desc">LangGraph · GPT-4o-mini · With Memory</div>
+          </div>
+        </div>
+        <div class="live-badge">
+          <div class="live-dot"></div>
+          LIVE
+        </div>
+      </header>
+
+      <!-- Messages -->
+      <section class="messages-area" id="messages-area" aria-live="polite" aria-label="Conversation">
+
+        <!-- Welcome state -->
+        <div class="welcome-banner" id="welcome-banner">
+          <span class="welcome-icon" aria-hidden="true">🏥</span>
+          <h2>Welcome to Surekha Hospital AI Assistant</h2>
+          <p>Powered by LangGraph with session memory and real-time observability. Ask me anything about our clinic, services, or appointments.</p>
+        </div>
+
+      </section>
+
+      <!-- Cumulative stats -->
+      <div class="stats-footer" aria-label="Cumulative session statistics">
+        <div class="stat-item">⚡ Total Tokens: <strong id="footer-total-tokens">0</strong></div>
+        <div class="stat-item">↑ Input: <strong id="footer-input-tokens">0</strong></div>
+        <div class="stat-item">↓ Output: <strong id="footer-output-tokens">0</strong></div>
+        <div class="stat-item">⏱ Last Latency: <strong id="footer-latency">—</strong></div>
+      </div>
+
+      <!-- Input Area -->
+      <div class="chat-input-area">
+        <div class="input-row">
+          <textarea
+            id="chat-input"
+            rows="1"
+            placeholder="Ask about services, appointments, doctors…"
+            aria-label="Type your message"
+            autofocus
+          ></textarea>
+          <button class="btn-send" id="btn-send" aria-label="Send message" title="Send (Enter)">
+            ➤
+          </button>
+        </div>
+        <p class="input-hint">Press <kbd style="background:rgba(255,255,255,0.1);padding:0.1rem 0.35rem;border-radius:4px;font-size:0.65rem">Enter</kbd> to send &nbsp;·&nbsp; <kbd style="background:rgba(255,255,255,0.1);padding:0.1rem 0.35rem;border-radius:4px;font-size:0.65rem">Shift+Enter</kbd> for new line</p>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ── JavaScript ─────────────────────────────────────────────── -->
+  <script>
+  (() => {
+    'use strict';
+
+    // ── Config ────────────────────────────────────────────────────
+    const API_BASE = window.location.origin;
+
+    // ── State ─────────────────────────────────────────────────────
+    let sessionId = sessionStorage.getItem('tw_session_id') || '';
+    let turnCount = 0;
+    let cumulativeTokens  = { input: 0, output: 0, total: 0 };
+    let latencies = [];
+    let isTyping = false;
+
+    // ── DOM refs ──────────────────────────────────────────────────
+    const messagesArea  = document.getElementById('messages-area');
+    const chatInput     = document.getElementById('chat-input');
+    const btnSend       = document.getElementById('btn-send');
+    const btnClear      = document.getElementById('btn-clear-session');
+    const welcomeBanner = document.getElementById('welcome-banner');
+    const errorToast    = document.getElementById('error-toast');
+
+    const agentDot      = document.getElementById('agent-dot');
+    const agentText     = document.getElementById('agent-status-text');
+    const sidDisplay    = document.getElementById('sid-display');
+    const turnEl        = document.getElementById('turn-count');
+    const sessionTokEl  = document.getElementById('session-tokens');
+    const sessionLatEl  = document.getElementById('session-latency');
+
+    const footerTotal   = document.getElementById('footer-total-tokens');
+    const footerInput   = document.getElementById('footer-input-tokens');
+    const footerOutput  = document.getElementById('footer-output-tokens');
+    const footerLatency = document.getElementById('footer-latency');
+
+    // ── Init ──────────────────────────────────────────────────────
+    function init() {
+      updateSidDisplay();
+      checkAgentHealth();
+      chatInput.focus();
+      setInterval(checkAgentHealth, 20000);
+    }
+
+    function updateSidDisplay() {
+      sidDisplay.textContent = sessionId
+        ? sessionId.slice(0, 8) + '…'
+        : 'New';
+    }
+
+    // ── Health check ──────────────────────────────────────────────
+    async function checkAgentHealth() {
+      agentDot.className = 'status-dot checking';
+      agentText.textContent = 'Connecting…';
+      try {
+        const res = await fetch(`${API_BASE}/health`, { signal: AbortSignal.timeout(5000) });
+        const data = await res.json();
+        const agentOk = data.pythonAgent?.status === 'healthy';
+        agentDot.className = agentOk ? 'status-dot' : 'status-dot offline';
+        agentText.textContent = agentOk ? 'Agent Online' : 'Agent Offline';
+      } catch {
+        agentDot.className = 'status-dot offline';
+        agentText.textContent = 'Unreachable';
+      }
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────
+    function formatTime(date) {
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function escapeHtml(text) {
+      return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function formatAgentText(text) {
+      return escapeHtml(text)
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/`(.*?)`/g, '<code>$1</code>')
+        .replace(/\n/g, '<br>');
+    }
+
+    function scrollToBottom() {
+      messagesArea.scrollTo({ top: messagesArea.scrollHeight, behavior: 'smooth' });
+    }
+
+    // ── Show error toast ──────────────────────────────────────────
+    function showError(msg) {
+      errorToast.textContent = '⚠ ' + msg;
+      errorToast.classList.add('show');
+      setTimeout(() => errorToast.classList.remove('show'), 4500);
+    }
+
+    // ── Render user message ───────────────────────────────────────
+    function appendUserMessage(text) {
+      welcomeBanner && (welcomeBanner.style.display = 'none');
+      const row = document.createElement('div');
+      row.className = 'msg-row user';
+      row.setAttribute('role', 'article');
+      row.setAttribute('aria-label', 'Your message');
+      row.innerHTML = `
+        <div class="msg-content">
+          <div class="msg-bubble">${escapeHtml(text)}</div>
+          <div class="msg-time">${formatTime(new Date())}</div>
+        </div>
+        <div class="msg-avatar" aria-hidden="true">👤</div>
+      `;
+      messagesArea.appendChild(row);
+      scrollToBottom();
+    }
+
+    // ── Render agent message + obs card ──────────────────────────
+    function appendAgentMessage(text, obs) {
+      const row = document.createElement('div');
+      row.className = 'msg-row agent';
+      row.setAttribute('role', 'article');
+      row.setAttribute('aria-label', 'Assistant response');
+      row.innerHTML = `
+        <div class="msg-avatar" aria-hidden="true">🤖</div>
+        <div class="msg-content">
+          <div class="msg-bubble">${formatAgentText(text)}</div>
+          <div class="msg-time">${formatTime(new Date())}</div>
+          ${obs ? renderObsCard(obs) : ''}
+        </div>
+      `;
+      messagesArea.appendChild(row);
+      scrollToBottom();
+    }
+
+    // ── Observability card HTML ───────────────────────────────────
+    function renderObsCard(obs) {
+      const { input_tokens, output_tokens, total_tokens, latency_ms } = obs;
+      return `
+        <div class="obs-card" role="region" aria-label="Token and latency metrics">
+          <div class="obs-item">
+            <span class="obs-value">${input_tokens.toLocaleString()}</span>
+            <span class="obs-label">↑ Input Tok</span>
+          </div>
+          <div class="obs-item teal">
+            <span class="obs-value">${output_tokens.toLocaleString()}</span>
+            <span class="obs-label">↓ Output Tok</span>
+          </div>
+          <div class="obs-item gold">
+            <span class="obs-value">${total_tokens.toLocaleString()}</span>
+            <span class="obs-label">∑ Total Tok</span>
+          </div>
+          <div class="obs-item violet">
+            <span class="obs-value">${latency_ms.toLocaleString()}ms</span>
+            <span class="obs-label">⏱ Latency</span>
+          </div>
+        </div>
+      `;
+    }
+
+    // ── Typing indicator ──────────────────────────────────────────
+    function showTyping() {
+      removeTyping();
+      const row = document.createElement('div');
+      row.className = 'typing-row';
+      row.id = 'typing-indicator';
+      row.setAttribute('aria-label', 'Assistant is typing');
+      row.innerHTML = `
+        <div class="msg-avatar" aria-hidden="true">🤖</div>
+        <div class="typing-bubble">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+      `;
+      messagesArea.appendChild(row);
+      scrollToBottom();
+    }
+
+    function removeTyping() {
+      const existing = document.getElementById('typing-indicator');
+      if (existing) existing.remove();
+    }
+
+    // ── Update cumulative stats ───────────────────────────────────
+    function updateStats(obs) {
+      cumulativeTokens.input  += obs.input_tokens;
+      cumulativeTokens.output += obs.output_tokens;
+      cumulativeTokens.total  += obs.total_tokens;
+      latencies.push(obs.latency_ms);
+      turnCount = obs.turn_number || turnCount + 1;
+
+      const avgLat = Math.round(latencies.reduce((a, b) => a + b, 0) / latencies.length);
+
+      // Footer
+      footerTotal.textContent  = cumulativeTokens.total.toLocaleString();
+      footerInput.textContent  = cumulativeTokens.input.toLocaleString();
+      footerOutput.textContent = cumulativeTokens.output.toLocaleString();
+      footerLatency.textContent = `${obs.latency_ms}ms`;
+
+      // Sidebar
+      turnEl.textContent       = turnCount;
+      sessionTokEl.textContent = cumulativeTokens.total.toLocaleString();
+      sessionLatEl.textContent = `${avgLat}ms avg`;
+    }
+
+    // ── Send message ──────────────────────────────────────────────
+    async function sendMessage() {
+      const text = chatInput.value.trim();
+      if (!text || isTyping) return;
+
+      isTyping = true;
+      btnSend.disabled = true;
+      chatInput.value = '';
+      chatInput.style.height = 'auto';
+
+      appendUserMessage(text);
+      showTyping();
+
+      try {
+        const res = await fetch(`${API_BASE}/chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text, session_id: sessionId }),
+        });
+
+        const data = await res.json();
+        removeTyping();
+
+        if (!res.ok || !data.success) {
+          showError(data.error || 'Something went wrong. Please try again.');
+          appendAgentMessage('⚠️ I encountered an error. ' + (data.error || 'Please try again.'), null);
+          return;
+        }
+
+        // Save session id from first response
+        if (!sessionId && data.session_id) {
+          sessionId = data.session_id;
+          sessionStorage.setItem('tw_session_id', sessionId);
+          updateSidDisplay();
+        }
+
+        appendAgentMessage(data.response, data);
+        updateStats(data);
+
+      } catch (err) {
+        removeTyping();
+        showError('Network error — is the server running?');
+        appendAgentMessage('⚠️ Unable to reach the AI agent. Please ensure both servers are running.', null);
+      } finally {
+        isTyping = false;
+        btnSend.disabled = false;
+        chatInput.focus();
+      }
+    }
+
+    // ── Clear session ─────────────────────────────────────────────
+    async function clearSession() {
+      if (sessionId) {
+        try {
+          await fetch(`${API_BASE}/chat/${sessionId}`, { method: 'DELETE' });
+        } catch (_) {}
+      }
+
+      sessionId = '';
+      sessionStorage.removeItem('tw_session_id');
+      turnCount = 0;
+      cumulativeTokens = { input: 0, output: 0, total: 0 };
+      latencies = [];
+
+      // Reset UI
+      messagesArea.innerHTML = '';
+      messagesArea.appendChild(welcomeBanner);
+      welcomeBanner.style.display = '';
+
+      footerTotal.textContent  = '0';
+      footerInput.textContent  = '0';
+      footerOutput.textContent = '0';
+      footerLatency.textContent = '—';
+      turnEl.textContent        = '0';
+      sessionTokEl.textContent  = '0';
+      sessionLatEl.textContent  = '—';
+      updateSidDisplay();
+      chatInput.focus();
+    }
+
+    // ── Auto-resize textarea ──────────────────────────────────────
+    chatInput.addEventListener('input', () => {
+      chatInput.style.height = 'auto';
+      chatInput.style.height = Math.min(chatInput.scrollHeight, 120) + 'px';
+    });
+
+    // ── Keyboard shortcuts ────────────────────────────────────────
+    chatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    // ── Button events ─────────────────────────────────────────────
+    btnSend.addEventListener('click', sendMessage);
+    btnClear.addEventListener('click', clearSession);
+
+    // ── Quick prompt chips ────────────────────────────────────────
+    document.querySelectorAll('.tip-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        chatInput.value = chip.dataset.prompt;
+        chatInput.dispatchEvent(new Event('input'));
+        sendMessage();
+      });
+    });
+
+    // ── Boot ──────────────────────────────────────────────────────
+    init();
+
+  })();
+  </script>
+
+</body>
+</html>

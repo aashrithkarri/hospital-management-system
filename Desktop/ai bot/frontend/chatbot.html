@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Health Assistant | Hospital Management System</title>
+  <meta name="description" content="Chat with our LangGraph-powered AI health assistant. Get instant answers about services, appointments, and clinic information." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="chatbot.css" />
+</head>
+<body>
+
+  <!-- TopAppBar matching landing page -->
+  <header class="hospital-top-nav">
+    <div class="top-nav-container">
+      <a href="/" class="top-nav-brand" title="Hospital Management System Home">
+        <span class="material-symbols-outlined top-brand-icon">medical_services</span>
+        <span class="top-brand-text">Hospital Management System</span>
+      </a>
+      <!-- Desktop Navigation -->
+      <nav class="top-nav-links">
+        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link active" href="/chatbot">AI Chatbot</a>
+        <a class="nav-link" href="/voice-call">Voice Call Agent</a>
+        <a class="nav-link" href="/admin">Admin Portal</a>
+      </nav>
+      <button class="btn-emergency" onclick="window.location.href='tel:911'">
+        <span class="material-symbols-outlined" style="font-size: 18px;">emergency</span>
+        Emergency: 911
+      </button>
+    </div>
+  </header>
+
+  <!-- Error toast -->
+  <div class="error-toast" id="error-toast" role="alert" aria-live="assertive"></div>
+
+  <div class="chat-shell">
+
+    <!-- ── Sidebar ─────────────────────────────────────────────── -->
+    <aside class="sidebar" aria-label="Chat sidebar">
+
+      <!-- Brand -->
+      <a href="/" class="sidebar-brand" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem; cursor: pointer;" title="Back to Home Page">
+        <div class="brand-icon" aria-hidden="true">🏥</div>
+        <div>
+          <div class="brand-name">Hospital Management System</div>
+          <div class="brand-sub">← Home Landing Page</div>
+        </div>
+      </a>
+
+      <!-- Agent Status -->
+      <div class="status-card" aria-label="Agent status">
+        <div class="status-row">
+          <div class="status-dot checking" id="agent-dot"></div>
+          <span class="status-label" id="agent-status-text">Connecting…</span>
+        </div>
+        <div class="status-row">
+          <div class="status-dot" style="background:#6366f1;box-shadow:0 0 6px #6366f1"></div>
+          <span>Model: <strong style="color:#a5b4fc">GPT-4o-mini</strong></span>
+        </div>
+        <div class="status-row">
+          <div class="status-dot" style="background:#2dd4bf;box-shadow:0 0 6px #2dd4bf"></div>
+          <span>Framework: <strong style="color:#5eead4">LangGraph</strong></span>
+        </div>
+      </div>
+
+      <!-- Session Info -->
+      <div class="session-card" aria-label="Session information">
+        <h4>Session</h4>
+        <div class="session-info-row">
+          <span>Session ID</span>
+          <span id="sid-display">—</span>
+        </div>
+        <div class="session-info-row">
+          <span>Turns</span>
+          <span id="turn-count">0</span>
+        </div>
+        <div class="session-info-row">
+          <span>Total Tokens</span>
+          <span id="session-tokens">0</span>
+        </div>
+        <div class="session-info-row">
+          <span>Avg Latency</span>
+          <span id="session-latency">—</span>
+        </div>
+        <button class="btn-clear" id="btn-clear-session" aria-label="Clear session and start new chat">
+          🗑 New Chat
+        </button>
+      </div>
+
+      <!-- Live Extractor Widget (Shown during call) -->
+      <div class="session-card" id="voice-extractor-card" style="display: none; border-color: #10b981; background: rgba(16,185,129,0.025);" aria-label="CRM Extraction">
+        <h4 style="color:#10b981; display:flex; align-items:center; gap:0.4rem; font-size:0.85rem;"><i class="fa-solid fa-brain"></i> Live CRM Extractor</h4>
+        <div style="display:flex; flex-direction:column; gap:0.5rem; font-size:0.75rem; color:var(--text-secondary); margin-top:0.6rem;">
+          <div style="display:flex; justify-content:space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.2rem;">
+            <span>Patient:</span>
+            <strong id="v-name" style="color:var(--text-primary)">Waiting...</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.2rem;">
+            <span>Phone:</span>
+            <strong id="v-phone" style="color:var(--text-primary)">Waiting...</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.2rem;">
+            <span>Symptoms:</span>
+            <strong id="v-symptoms" style="color:var(--text-primary); text-align:right; max-width: 120px; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">Waiting...</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.2rem;">
+            <span>Doctor:</span>
+            <strong id="v-doctor" style="color:var(--text-primary)">Waiting...</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.2rem;">
+            <span>Slot:</span>
+            <strong id="v-slot" style="color:var(--text-primary)">Waiting...</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.2rem;">
+            <span>Urgency:</span>
+            <strong id="v-urgency" style="color:var(--text-primary)">Waiting...</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; padding-bottom: 0.1rem;">
+            <span>Ref:</span>
+            <strong id="v-ref" style="color:var(--text-primary)">Waiting...</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick prompts -->
+      <div class="tips-card" aria-label="Suggested questions">
+        <h4>Try asking</h4>
+        <span class="tip-chip" data-prompt="What services do you offer?">Services & Pricing</span>
+        <span class="tip-chip" data-prompt="What are your clinic hours?">Clinic Hours</span>
+        <span class="tip-chip" data-prompt="How do I book an appointment?">Book Appointment</span>
+        <span class="tip-chip" data-prompt="Which insurance plans do you accept?">Insurance</span>
+        <span class="tip-chip" data-prompt="Tell me about your doctors">Our Specialists</span>
+        <span class="tip-chip" data-prompt="What is your cancellation policy?">Cancellation Policy</span>
+      </div>
+
+    </aside>
+
+    <!-- ── Main Chat Panel ──────────────────────────────────────── -->
+    <main class="chat-main" aria-label="Chat interface">
+
+      <!-- Header -->
+      <header class="chat-header">
+        <div class="chat-header-left">
+          <div class="agent-avatar" title="Aria AI Assistant">
+            <span class="material-symbols-outlined" style="font-size: 24px;">smart_toy</span>
+          </div>
+          <div>
+            <div class="agent-name">Aria — Clinical AI Receptionist</div>
+            <div class="agent-desc">LangGraph & Voice-Enabled Assistant</div>
+          </div>
+        </div>
+        
+        <div style="display:flex; align-items:center; gap:0.65rem;">
+          <!-- Theme toggle button -->
+          <button id="btn-theme-toggle" style="background: var(--bg-card); border: 1px solid var(--border-light); color: var(--text-primary); padding: 0.5rem; border-radius: var(--radius-full); cursor: pointer; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; transition: var(--transition);" title="Toggle Light/Dark Theme">
+            <i class="fa-solid fa-moon" id="theme-toggle-icon"></i>
+          </button>
+
+          <!-- Language Selector Selection -->
+          <select id="lang-pref-select" style="background: var(--bg-card); border: 1px solid var(--border-light); color: var(--primary); padding: 0.4rem 0.75rem; border-radius: var(--radius-full); font-size: 0.8rem; font-weight: 600; outline: none; cursor: pointer;">
+            <option value="en">English (US)</option>
+            <option value="te">తెలుగు (Telugu)</option>
+          </select>
+
+          <!-- Voice agent call simulation button -->
+          <button id="btn-call-receptionist" class="btn-voice-toggle" style="background: rgba(0, 106, 106, 0.1); border: 1.5px solid var(--secondary); color: var(--secondary); padding: 0.45rem 1rem; border-radius: var(--radius-full); font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: var(--transition); font-size: 0.82rem;" title="Call AI Receptionist">
+            <i class="fa-solid fa-phone" id="call-toggle-icon"></i>
+            <span id="call-toggle-text">Voice Call Agent</span>
+          </button>
+          
+          <div class="live-badge">
+            <div class="live-dot"></div>
+            LIVE
+          </div>
+        </div>
+      </header>
+
+      <!-- Messages -->
+      <section class="messages-area" id="messages-area" aria-live="polite" aria-label="Conversation">
+
+        <!-- Welcome state -->
+        <div class="welcome-banner" id="welcome-banner">
+          <span class="welcome-icon" aria-hidden="true">🏥</span>
+          <h2>Welcome to Hospital Management System AI Assistant</h2>
+          <p>Powered by LangGraph with session memory and real-time observability. Ask me anything about our clinic, services, or appointments.</p>
+        </div>
+
+      </section>
+
+      <!-- Cumulative stats -->
+      <div class="stats-footer" aria-label="Cumulative session statistics">
+        <div class="stat-item">⚡ Total Tokens: <strong id="footer-total-tokens">0</strong></div>
+        <div class="stat-item">↑ Input: <strong id="footer-input-tokens">0</strong></div>
+        <div class="stat-item">↓ Output: <strong id="footer-output-tokens">0</strong></div>
+        <div class="stat-item">⏱ Last Latency: <strong id="footer-latency">—</strong></div>
+      </div>
+
+      <!-- Input Area -->
+      <div class="chat-input-area">
+        <div class="input-row">
+          <textarea
+            id="chat-input"
+            rows="1"
+            placeholder="Ask about services, appointments, doctors…"
+            aria-label="Type your message"
+            autofocus
+          ></textarea>
+          <button class="btn-send" id="btn-send" aria-label="Send message" title="Send (Enter)">
+            ➤
+          </button>
+        </div>
+        <p class="input-hint">Press <kbd style="background:rgba(255,255,255,0.1);padding:0.1rem 0.35rem;border-radius:4px;font-size:0.65rem">Enter</kbd> to send &nbsp;·&nbsp; <kbd style="background:rgba(255,255,255,0.1);padding:0.1rem 0.35rem;border-radius:4px;font-size:0.65rem">Shift+Enter</kbd> for new line</p>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ── JavaScript ─────────────────────────────────────────────── -->
+  <script>
+  (() => {
+    'use strict';
+
+    // ── Config ────────────────────────────────────────────────────
+    const API_BASE = window.location.origin;
+
+    // ── State ─────────────────────────────────────────────────────
+    let sessionId = sessionStorage.getItem('tw_session_id') || '';
+    let turnCount = 0;
+    let cumulativeTokens  = { input: 0, output: 0, total: 0 };
+    let latencies = [];
+    let isTyping = false;
+
+    // ── Voice Call State ──────────────────────────────────────────
+    let isVoiceCallActive = false;
+    let voiceSessionId = '';
+    let isBotSpeaking = false;
+    let isWaitingForResponse = false;
+    let recognition = null;
+    let speakVoices = [];
+    let currentCallerPhone = '';
+
+    // Voice UI elements
+    const btnCallToggle = document.getElementById('btn-call-receptionist');
+    const callIcon = document.getElementById('call-toggle-icon');
+    const callText = document.getElementById('call-toggle-text');
+    const voiceCard = document.getElementById('voice-extractor-card');
+
+    // ── DOM refs ──────────────────────────────────────────────────
+    const messagesArea  = document.getElementById('messages-area');
+    const chatInput     = document.getElementById('chat-input');
+    const btnSend       = document.getElementById('btn-send');
+    const btnClear      = document.getElementById('btn-clear-session');
+    const welcomeBanner = document.getElementById('welcome-banner');
+    const errorToast    = document.getElementById('error-toast');
+
+    const agentDot      = document.getElementById('agent-dot');
+    const agentText     = document.getElementById('agent-status-text');
+    const sidDisplay    = document.getElementById('sid-display');
+    const turnEl        = document.getElementById('turn-count');
+    const sessionTokEl  = document.getElementById('session-tokens');
+    const sessionLatEl  = document.getElementById('session-latency');
+
+    const footerTotal   = document.getElementById('footer-total-tokens');
+    const footerInput   = document.getElementById('footer-input-tokens');
+    const footerOutput  = document.getElementById('footer-output-tokens');
+    const footerLatency = document.getElementById('footer-latency');
+
+    // ── Init ──────────────────────────────────────────────────────
+    function init() {
+      updateSidDisplay();
+      checkAgentHealth();
+      initSpeechSynthesis();
+      initSpeechRecognition();
+      chatInput.focus();
+      setInterval(checkAgentHealth, 20000);
+
+      if (btnCallToggle) {
+        btnCallToggle.addEventListener('click', toggleVoiceCall);
+      }
+
+      // Theme switcher initialization
+      const btnThemeToggle = document.getElementById('btn-theme-toggle');
+      const themeIcon = document.getElementById('theme-toggle-icon');
+      const savedTheme = localStorage.getItem('tw_chatbot_theme') || 'light';
+      if (savedTheme === 'dark') {
+        document.body.classList.add('dark-theme');
+        if (themeIcon) {
+          themeIcon.className = 'fa-solid fa-moon';
+        }
+      } else {
+        if (themeIcon) {
+          themeIcon.className = 'fa-solid fa-sun';
+        }
+      }
+      if (btnThemeToggle) {
+        btnThemeToggle.addEventListener('click', () => {
+          document.body.classList.toggle('dark-theme');
+          const isDark = document.body.classList.contains('dark-theme');
+          localStorage.setItem('tw_chatbot_theme', isDark ? 'dark' : 'light');
+          if (themeIcon) {
+            themeIcon.className = isDark ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+          }
+        });
+      }
+    }
+
+    function updateSidDisplay() {
+      sidDisplay.textContent = sessionId
+        ? sessionId.slice(0, 8) + '…'
+        : 'New';
+    }
+
+    // ── Health check ──────────────────────────────────────────────
+    async function checkAgentHealth() {
+      agentDot.className = 'status-dot checking';
+      agentText.textContent = 'Connecting…';
+      try {
+        const res = await fetch(`${API_BASE}/health`, { signal: AbortSignal.timeout(5000) });
+        const data = await res.json();
+        const agentOk = data.pythonAgent?.status === 'healthy';
+        agentDot.className = agentOk ? 'status-dot' : 'status-dot offline';
+        agentText.textContent = agentOk ? 'Agent Online' : 'Agent Offline';
+      } catch {
+        agentDot.className = 'status-dot offline';
+        agentText.textContent = 'Unreachable';
+      }
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────
+    function formatTime(date) {
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function escapeHtml(text) {
+      return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function formatAgentText(text) {
+      return escapeHtml(text)
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/`(.*?)`/g, '<code>$1</code>')
+        .replace(/\n/g, '<br>');
+    }
+
+    function scrollToBottom() {
+      messagesArea.scrollTo({ top: messagesArea.scrollHeight, behavior: 'smooth' });
+    }
+
+    // ── Show error toast ──────────────────────────────────────────
+    function showError(msg) {
+      errorToast.textContent = '⚠ ' + msg;
+      errorToast.classList.add('show');
+      setTimeout(() => errorToast.classList.remove('show'), 4500);
+    }
+
+    // ── Render user message ───────────────────────────────────────
+    function appendUserMessage(text) {
+      welcomeBanner && (welcomeBanner.style.display = 'none');
+      const row = document.createElement('div');
+      row.className = 'msg-row user';
+      row.setAttribute('role', 'article');
+      row.setAttribute('aria-label', 'Your message');
+      row.innerHTML = `
+        <div class="msg-content">
+          <div class="msg-bubble">${escapeHtml(text)}</div>
+          <div class="msg-time">${formatTime(new Date())}</div>
+        </div>
+        <div class="msg-avatar" aria-hidden="true">👤</div>
+      `;
+      messagesArea.appendChild(row);
+      scrollToBottom();
+    }
+
+    // ── Render agent message + obs card ──────────────────────────
+    function appendAgentMessage(text, obs) {
+      const row = document.createElement('div');
+      row.className = 'msg-row agent';
+      row.setAttribute('role', 'article');
+      row.setAttribute('aria-label', 'Assistant response');
+      row.innerHTML = `
+        <div class="msg-avatar" aria-hidden="true">🤖</div>
+        <div class="msg-content">
+          <div class="msg-bubble">${formatAgentText(text)}</div>
+          <div class="msg-time">${formatTime(new Date())}</div>
+          ${obs ? renderObsCard(obs) : ''}
+        </div>
+      `;
+      messagesArea.appendChild(row);
+      scrollToBottom();
+    }
+
+    // ── Observability card HTML ───────────────────────────────────
+    function renderObsCard(obs) {
+      const { input_tokens, output_tokens, total_tokens, latency_ms } = obs;
+      return `
+        <div class="obs-card" role="region" aria-label="Token and latency metrics">
+          <div class="obs-item">
+            <span class="obs-value">${input_tokens.toLocaleString()}</span>
+            <span class="obs-label">↑ Input Tok</span>
+          </div>
+          <div class="obs-item teal">
+            <span class="obs-value">${output_tokens.toLocaleString()}</span>
+            <span class="obs-label">↓ Output Tok</span>
+          </div>
+          <div class="obs-item gold">
+            <span class="obs-value">${total_tokens.toLocaleString()}</span>
+            <span class="obs-label">∑ Total Tok</span>
+          </div>
+          <div class="obs-item violet">
+            <span class="obs-value">${latency_ms.toLocaleString()}ms</span>
+            <span class="obs-label">⏱ Latency</span>
+          </div>
+        </div>
+      `;
+    }
+
+    // ── Typing indicator ──────────────────────────────────────────
+    function showTyping() {
+      removeTyping();
+      const row = document.createElement('div');
+      row.className = 'typing-row';
+      row.id = 'typing-indicator';
+      row.setAttribute('aria-label', 'Assistant is typing');
+      row.innerHTML = `
+        <div class="msg-avatar" aria-hidden="true">🤖</div>
+        <div class="typing-bubble">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+      `;
+      messagesArea.appendChild(row);
+      scrollToBottom();
+    }
+
+    function removeTyping() {
+      const existing = document.getElementById('typing-indicator');
+      if (existing) existing.remove();
+    }
+
+    // ── Update cumulative stats ───────────────────────────────────
+    function updateStats(obs) {
+      cumulativeTokens.input  += obs.input_tokens;
+      cumulativeTokens.output += obs.output_tokens;
+      cumulativeTokens.total  += obs.total_tokens;
+      latencies.push(obs.latency_ms);
+      turnCount = obs.turn_number || turnCount + 1;
+
+      const avgLat = Math.round(latencies.reduce((a, b) => a + b, 0) / latencies.length);
+
+      // Footer
+      footerTotal.textContent  = cumulativeTokens.total.toLocaleString();
+      footerInput.textContent  = cumulativeTokens.input.toLocaleString();
+      footerOutput.textContent = cumulativeTokens.output.toLocaleString();
+      footerLatency.textContent = `${obs.latency_ms}ms`;
+
+      // Sidebar
+      turnEl.textContent       = turnCount;
+      sessionTokEl.textContent = cumulativeTokens.total.toLocaleString();
+      sessionLatEl.textContent = `${avgLat}ms avg`;
+    }
+
+    // ── Send message ──────────────────────────────────────────────
+    async function sendMessage() {
+      const text = chatInput.value.trim();
+      if (!text || isTyping) return;
+
+      if (isVoiceCallActive) {
+        chatInput.value = '';
+        chatInput.style.height = 'auto';
+        appendUserMessage(text);
+        sendInputToVoiceAgent(text);
+        return;
+      }
+
+      isTyping = true;
+      btnSend.disabled = true;
+      chatInput.value = '';
+      chatInput.style.height = 'auto';
+
+      appendUserMessage(text);
+      showTyping();
+
+      try {
+        const res = await fetch(`${API_BASE}/chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text, session_id: sessionId }),
+        });
+
+        const data = await res.json();
+        removeTyping();
+
+        if (!res.ok || !data.success) {
+          showError(data.error || 'Something went wrong. Please try again.');
+          appendAgentMessage('⚠️ I encountered an error. ' + (data.error || 'Please try again.'), null);
+          return;
+        }
+
+        // Save session id from first response
+        if (!sessionId && data.session_id) {
+          sessionId = data.session_id;
+          sessionStorage.setItem('tw_session_id', sessionId);
+          updateSidDisplay();
+        }
+
+        appendAgentMessage(data.response, data);
+        updateStats(data);
+
+      } catch (err) {
+        removeTyping();
+        showError('Network error — is the server running?');
+        appendAgentMessage('⚠️ Unable to reach the AI agent. Please ensure both servers are running.', null);
+      } finally {
+        isTyping = false;
+        btnSend.disabled = false;
+        chatInput.focus();
+      }
+    }
+
+    // ── Clear session ─────────────────────────────────────────────
+    async function clearSession() {
+      if (isVoiceCallActive) {
+        hangUpVoiceCall();
+      }
+
+      if (sessionId) {
+        try {
+          await fetch(`${API_BASE}/chat/${sessionId}`, { method: 'DELETE' });
+        } catch (_) {}
+      }
+
+      sessionId = '';
+      sessionStorage.removeItem('tw_session_id');
+      turnCount = 0;
+      cumulativeTokens = { input: 0, output: 0, total: 0 };
+      latencies = [];
+
+      // Reset UI
+      messagesArea.innerHTML = '';
+      messagesArea.appendChild(welcomeBanner);
+      welcomeBanner.style.display = '';
+
+      footerTotal.textContent  = '0';
+      footerInput.textContent  = '0';
+      footerOutput.textContent = '0';
+      footerLatency.textContent = '—';
+      turnEl.textContent        = '0';
+      sessionTokEl.textContent  = '0';
+      sessionLatEl.textContent  = '—';
+      updateSidDisplay();
+      chatInput.focus();
+    }
+
+    // ── Auto-resize textarea ──────────────────────────────────────
+    chatInput.addEventListener('input', () => {
+      chatInput.style.height = 'auto';
+      chatInput.style.height = Math.min(chatInput.scrollHeight, 120) + 'px';
+    });
+
+    // ── Keyboard shortcuts ────────────────────────────────────────
+    chatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    // ── Button events ─────────────────────────────────────────────
+    btnSend.addEventListener('click', sendMessage);
+    btnClear.addEventListener('click', clearSession);
+
+    // ── Quick prompt chips ────────────────────────────────────────
+    document.querySelectorAll('.tip-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        chatInput.value = chip.dataset.prompt;
+        chatInput.dispatchEvent(new Event('input'));
+        sendMessage();
+      });
+    });
+
+    // ── Voice Agent Mechanics ────────────────────────────────────
+    function toggleVoiceCall() {
+      if (!isVoiceCallActive) {
+        startVoiceCall();
+      } else {
+        hangUpVoiceCall();
+      }
+    }
+
+    function startVoiceCall() {
+      isVoiceCallActive = true;
+      voiceSessionId = 'vses_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
+      currentCallerPhone = generateRandomPhone();
+
+      btnCallToggle.style.background = 'rgba(239, 68, 68, 0.15)';
+      btnCallToggle.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+      btnCallToggle.style.color = '#ef4444';
+      callIcon.className = 'fa-solid fa-phone-slash';
+      callText.textContent = 'Hang Up Call';
+
+      voiceCard.style.display = 'block';
+      clearExtractorFields();
+
+      welcomeBanner && (welcomeBanner.style.display = 'none');
+      appendSystemNotification('Connecting to AI receptionist voice agent...');
+
+      setTimeout(() => {
+        if (!isVoiceCallActive) return;
+        appendSystemNotification(`Call connected on ${currentCallerPhone}`);
+        sendInputToVoiceAgent('');
+      }, 1200);
+    }
+
+    function hangUpVoiceCall() {
+      isVoiceCallActive = false;
+      if (currentAudioPlayback) {
+        try { currentAudioPlayback.pause(); currentAudioPlayback.currentTime = 0; } catch(e){}
+        currentAudioPlayback = null;
+      }
+      if (recognition) {
+        try { recognition.stop(); } catch(e){}
+      }
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+
+      btnCallToggle.style.background = 'rgba(16, 185, 129, 0.15)';
+      btnCallToggle.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+      btnCallToggle.style.color = '#10b981';
+      callIcon.className = 'fa-solid fa-phone';
+      callText.textContent = 'Call AI Agent';
+
+      voiceCard.style.display = 'none';
+      
+      const smsToast = document.getElementById('sms-toast-overlay');
+      if (smsToast) smsToast.classList.remove('show');
+      
+      appendSystemNotification('Voice call disconnected.');
+    }
+
+    function generateRandomPhone() {
+      const parts = [
+        Math.floor(200 + Math.random() * 800),
+        Math.floor(200 + Math.random() * 800),
+        Math.floor(1000 + Math.random() * 9000)
+      ];
+      return `+1 (${parts[0]}) ${parts[1]}-${parts[2]}`;
+    }
+
+    function initSpeechSynthesis() {
+      if ('speechSynthesis' in window) {
+        speakVoices = window.speechSynthesis.getVoices();
+        window.speechSynthesis.onvoiceschanged = () => {
+          speakVoices = window.speechSynthesis.getVoices();
+        };
+      }
+    }
+    initSpeechSynthesis();
+
+    let currentAudioPlayback = null;
+
+    function speakText(text, callback) {
+      if (!text) {
+        if (callback) callback();
+        return;
+      }
+
+      const selectedLanguage = document.getElementById('lang-pref-select').value || 'en';
+
+      if (currentAudioPlayback) {
+        try {
+          currentAudioPlayback.pause();
+          currentAudioPlayback.currentTime = 0;
+        } catch(e) {}
+        currentAudioPlayback = null;
+      }
+
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+
+      // If Telugu is selected, use high-fidelity natural human Telugu voice stream
+      if (selectedLanguage === 'te') {
+        const audioUrl = 'https://translate.google.com/translate_tts?ie=UTF-8&tl=te&client=tw-ob&q=' + encodeURIComponent(text);
+        const audio = new Audio(audioUrl);
+        currentAudioPlayback = audio;
+
+        let hasFinished = false;
+        const done = () => {
+          if (!hasFinished) {
+            hasFinished = true;
+            isBotSpeaking = false;
+            currentAudioPlayback = null;
+            if (callback) callback();
+          }
+        };
+
+        audio.onplay = () => {
+          isBotSpeaking = true;
+        };
+
+        audio.onended = () => {
+          done();
+        };
+
+        audio.onerror = () => {
+          fallbackSpeechSynthesis(text, selectedLanguage, callback);
+        };
+
+        audio.play().catch(err => {
+          fallbackSpeechSynthesis(text, selectedLanguage, callback);
+        });
+        return;
+      }
+
+      fallbackSpeechSynthesis(text, selectedLanguage, callback);
+    }
+
+    function fallbackSpeechSynthesis(text, selectedLanguage, callback) {
+      if (!('speechSynthesis' in window)) {
+        if (callback) callback();
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = selectedLanguage === 'te' ? 'te-IN' : 'en-US';
+
+      let selectedVoice = null;
+      if (selectedLanguage === 'te') {
+        selectedVoice = speakVoices.find(v => v.lang.startsWith('te') || v.name.includes('Telugu') || v.name.includes('India'));
+      } else {
+        selectedVoice = speakVoices.find(v => v.name.includes('Google US English') || v.name.includes('Zira') || v.name.includes('Samantha') || v.name.includes('Moira'));
+      }
+
+      if (!selectedVoice && speakVoices.length > 0 && selectedLanguage !== 'te') {
+        selectedVoice = speakVoices.find(v => v.lang.startsWith('en')) || speakVoices[0];
+      }
+      if (selectedVoice) utterance.voice = selectedVoice;
+
+      utterance.rate = 0.95;
+      utterance.pitch = 1.0;
+
+      utterance.onstart = () => {
+        isBotSpeaking = true;
+      };
+
+      utterance.onend = () => {
+        isBotSpeaking = false;
+        if (callback) callback();
+      };
+
+      utterance.onerror = () => {
+        isBotSpeaking = false;
+        if (callback) callback();
+      };
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function startRecognition() {
+      if (recognition) {
+        const selectedLanguage = document.getElementById('lang-pref-select').value || 'en';
+        recognition.lang = selectedLanguage === 'te' ? 'te-IN' : 'en-US';
+        try { recognition.start(); } catch(e){}
+      }
+    }
+
+    function initSpeechRecognition() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) return;
+
+      recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'en-US';
+
+      recognition.onstart = () => {
+        agentText.textContent = 'Listening...';
+        agentDot.className = 'status-dot checking';
+      };
+
+      recognition.onresult = (event) => {
+        const text = event.results[0][0].transcript;
+        if (text && text.trim() !== '') {
+          appendUserMessage(text);
+          sendInputToVoiceAgent(text);
+        }
+      };
+
+      recognition.onend = () => {
+        agentDot.className = isVoiceCallActive ? 'status-dot' : 'status-dot offline';
+        agentText.textContent = isVoiceCallActive ? 'Call Connected' : 'Agent Online';
+
+        if (isVoiceCallActive && !isBotSpeaking && !isWaitingForResponse) {
+          setTimeout(() => {
+            if (isVoiceCallActive && !isBotSpeaking && !isWaitingForResponse) {
+              startRecognition();
+            }
+          }, 800);
+        }
+      };
+    }
+
+    async function sendInputToVoiceAgent(userInput) {
+      if (!isVoiceCallActive) return;
+      isWaitingForResponse = true;
+      if (recognition) {
+        try { recognition.stop(); } catch(e){}
+      }
+
+      showTyping();
+
+      try {
+        const res = await fetch(`${API_BASE}/api/voice-call/process`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sessionId: voiceSessionId,
+            userInput: userInput,
+            callerPhone: currentCallerPhone,
+            language: document.getElementById('lang-pref-select').value || 'en'
+          })
+        });
+
+        const data = await res.json();
+        removeTyping();
+        isWaitingForResponse = false;
+
+        if (data.success) {
+          appendAgentMessage(data.voiceResponse, null);
+          updateExtractorFields(data.session, data.appointmentId);
+
+          speakText(data.voiceResponse, () => {
+            if (!isVoiceCallActive) return;
+            if (data.isBooked) {
+              setTimeout(() => {
+                showSmsAlertBanner(data.appointmentId);
+              }, 1000);
+            } else if (data.isEmergency) {
+              hangUpVoiceCall();
+            } else {
+              startRecognition();
+            }
+          });
+        }
+      } catch (err) {
+        removeTyping();
+        isWaitingForResponse = false;
+        showError('Voice call API error');
+      }
+    }    };
+
+      recognition.onresult = (event) => {
+        const text = event.results[0][0].transcript;
+        if (text && text.trim() !== '') {
+          appendUserMessage(text);
+          sendInputToVoiceAgent(text);
+        }
+      };
+
+      recognition.onend = () => {
+        agentDot.className = isVoiceCallActive ? 'status-dot' : 'status-dot offline';
+        agentText.textContent = isVoiceCallActive ? 'Call Connected' : 'Agent Online';
+
+        if (isVoiceCallActive && !isBotSpeaking && !isWaitingForResponse) {
+          setTimeout(() => {
+            if (isVoiceCallActive && !isBotSpeaking && !isWaitingForResponse) {
+              try { recognition.start(); } catch(e){}
+            }
+          }, 800);
+        }
+      };
+    }
+
+    async function sendInputToVoiceAgent(userInput) {
+      if (!isVoiceCallActive) return;
+      isWaitingForResponse = true;
+      if (recognition) {
+        try { recognition.stop(); } catch(e){}
+      }
+
+      showTyping();
+
+      try {
+        const res = await fetch(`${API_BASE}/api/voice-call/process`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sessionId: voiceSessionId,
+            userInput: userInput,
+            callerPhone: currentCallerPhone
+          })
+        });
+
+        const data = await res.json();
+        removeTyping();
+        isWaitingForResponse = false;
+
+        if (data.success) {
+          appendAgentMessage(data.voiceResponse, null);
+          updateExtractorFields(data.session, data.appointmentId);
+
+          speakText(data.voiceResponse, () => {
+            if (!isVoiceCallActive) return;
+            if (data.isBooked) {
+              setTimeout(() => {
+                showSmsAlertBanner(data.appointmentId);
+              }, 1000);
+            } else if (data.isEmergency) {
+              hangUpVoiceCall();
+            } else if (recognition) {
+              try { recognition.start(); } catch(e){}
+            }
+          });
+        }
+      } catch (err) {
+        removeTyping();
+        isWaitingForResponse = false;
+        showError('Voice call API error');
+      }
+    }
+
+    function appendSystemNotification(text) {
+      const row = document.createElement('div');
+      row.className = 'msg-row';
+      row.style.justifyContent = 'center';
+      row.style.margin = '0.5rem 0';
+      row.innerHTML = `
+        <div style="font-size: 0.8rem; background: rgba(255,255,255,0.04); color: var(--text-secondary); padding: 0.3rem 0.8rem; border-radius: var(--radius-lg); border: 1px solid var(--glass-border);">
+          ℹ️ ${text}
+        </div>
+      `;
+      messagesArea.appendChild(row);
+      scrollToBottom();
+    }
+
+    function updateExtractorFields(session, aptId) {
+      if (!session) return;
+      
+      const vName = document.getElementById('v-name');
+      const vPhone = document.getElementById('v-phone');
+      const vSymptoms = document.getElementById('v-symptoms');
+      const vDoctor = document.getElementById('v-doctor');
+      const vSlot = document.getElementById('v-slot');
+      const vUrgency = document.getElementById('v-urgency');
+      const vRef = document.getElementById('v-ref');
+
+      // Patient Name
+      if (session.patientName) {
+        vName.textContent = session.patientName;
+        vName.style.color = 'var(--indigo-300)';
+        vName.style.fontWeight = '700';
+      } else {
+        vName.textContent = 'Waiting...';
+        vName.style.color = '';
+        vName.style.fontWeight = '';
+      }
+
+      // Phone
+      if (session.callerPhone) {
+        vPhone.textContent = session.callerPhone;
+        vPhone.style.color = 'var(--text-primary)';
+      } else {
+        vPhone.textContent = 'Waiting...';
+        vPhone.style.color = '';
+      }
+
+      // Symptoms
+      if (session.symptoms) {
+        vSymptoms.textContent = session.symptoms;
+        vSymptoms.style.color = 'var(--text-primary)';
+        vSymptoms.title = session.symptoms;
+      } else {
+        vSymptoms.textContent = 'Waiting...';
+        vSymptoms.style.color = '';
+      }
+
+      // Doctor
+      if (session.doctorAssigned) {
+        vDoctor.textContent = session.doctorAssigned;
+        vDoctor.style.color = 'var(--teal-300)';
+        vDoctor.style.fontWeight = '600';
+      } else {
+        vDoctor.textContent = 'Waiting...';
+        vDoctor.style.color = '';
+        vDoctor.style.fontWeight = '';
+      }
+
+      // Slot
+      if (session.preferredDate && session.preferredTime) {
+        vSlot.textContent = `${session.preferredDate} (${session.preferredTime})`;
+        vSlot.style.color = 'var(--text-primary)';
+      } else {
+        vSlot.textContent = 'Waiting...';
+        vSlot.style.color = '';
+      }
+
+      // Urgency Pill styling
+      if (session.urgency) {
+        vUrgency.textContent = session.urgency;
+        if (session.urgency.toLowerCase() === 'hot') {
+          vUrgency.style.background = 'rgba(239, 68, 68, 0.18)';
+          vUrgency.style.color = '#ef4444';
+          vUrgency.style.border = '1px solid rgba(239, 68, 68, 0.3)';
+        } else if (session.urgency.toLowerCase() === 'warm') {
+          vUrgency.style.background = 'rgba(245, 158, 11, 0.18)';
+          vUrgency.style.color = '#f59e0b';
+          vUrgency.style.border = '1px solid rgba(245, 158, 11, 0.3)';
+        } else {
+          vUrgency.style.background = 'rgba(59, 130, 246, 0.18)';
+          vUrgency.style.color = '#3b82f6';
+          vUrgency.style.border = '1px solid rgba(59, 130, 246, 0.3)';
+        }
+        vUrgency.style.padding = '0.1rem 0.4rem';
+        vUrgency.style.borderRadius = '6px';
+        vUrgency.style.fontSize = '0.68rem';
+        vUrgency.style.textTransform = 'uppercase';
+      } else {
+        vUrgency.textContent = 'Waiting...';
+        vUrgency.style.background = '';
+        vUrgency.style.color = '';
+        vUrgency.style.border = '';
+        vUrgency.style.padding = '';
+        vUrgency.style.borderRadius = '';
+        vUrgency.style.fontSize = '';
+      }
+
+      // Confirmed Reference Code block
+      if (aptId) {
+        vRef.innerHTML = `<code style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); color: #10b981; padding: 0.15rem 0.45rem; border-radius: 4px; font-weight: 700; font-family: var(--font-mono); box-shadow: 0 0 10px rgba(16, 185, 129, 0.2); animation: pulse-border 1.5s ease infinite;">${aptId}</code>`;
+      } else {
+        vRef.textContent = 'Waiting...';
+      }
+    }
+
+    function clearExtractorFields() {
+      const ids = ['v-name', 'v-phone', 'v-symptoms', 'v-doctor', 'v-slot', 'v-urgency', 'v-ref'];
+      ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.textContent = 'Waiting...';
+          el.style.color = '';
+          el.style.fontWeight = '';
+          el.style.background = '';
+          el.style.border = '';
+          el.style.padding = '';
+          el.style.borderRadius = '';
+          el.style.fontSize = '';
+        }
+      });
+    }
+
+    // SMS toast trigger
+    function showSmsAlertBanner(aptId) {
+      const smsToast = document.getElementById('sms-toast-overlay');
+      const smsToastBody = document.getElementById('sms-toast-body');
+      const smsToastTime = document.getElementById('sms-toast-time');
+      
+      if (smsToast && smsToastBody && smsToastTime) {
+        const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        smsToastTime.textContent = timeStr;
+        smsToastBody.textContent = `Hospital Management System Alert: Your appointment is booked. Code: ${aptId}. Specialist details synced to dashboard.`;
+        smsToast.classList.add('show');
+        
+        setTimeout(() => {
+          smsToast.classList.remove('show');
+        }, 8000);
+      }
+    }
+
+    // ── Boot ──────────────────────────────────────────────────────
+    init();
+
+  })();
+  </script>
+
+  <!-- SMS toast overlay -->
+  <div class="sms-toast" id="sms-toast-overlay">
+    <div class="sms-header">
+      <span class="sms-sender"><i class="fa-solid fa-comment-sms"></i> MESSAGES</span>
+      <span class="sms-time" id="sms-toast-time">Just Now</span>
+    </div>
+    <div class="sms-body" id="sms-toast-body">
+      Hospital Management System Alert: Your appointment is confirmed.
+    </div>
+  </div>
+
+</body>
+</html>

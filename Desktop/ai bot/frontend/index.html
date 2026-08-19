@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Hospital Management System - Multi-Specialty Clinic & AI Care</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .material-symbols-outlined, .material-icons {
+      font-family: 'Material Symbols Outlined', 'Material Icons', sans-serif !important;
+      font-weight: normal;
+      font-style: normal;
+      font-size: 24px;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      font-feature-settings: 'liga';
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .material-symbols-outlined.fill-icon {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+  </style>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "inverse-on-surface": "#f0f1f2",
+            "on-error-container": "#93000a",
+            "surface-container-highest": "#e1e3e4",
+            "outline": "#727783",
+            "surface-container-low": "#f3f4f5",
+            "primary": "#00478d",
+            "on-secondary-fixed-variant": "#004f4f",
+            "surface-bright": "#f8f9fa",
+            "on-primary-fixed-variant": "#00468c",
+            "primary-fixed-dim": "#a9c7ff",
+            "on-secondary-container": "#007070",
+            "on-surface-variant": "#424752",
+            "secondary-fixed": "#8cf3f3",
+            "on-background": "#191c1d",
+            "on-primary-container": "#c8daff",
+            "on-tertiary-fixed": "#151c22",
+            "surface-tint": "#005db6",
+            "surface-container": "#edeeef",
+            "secondary-fixed-dim": "#6fd7d6",
+            "on-tertiary-container": "#d4dbe2",
+            "tertiary-fixed-dim": "#c0c7cf",
+            "tertiary": "#41484f",
+            "primary-fixed": "#d6e3ff",
+            "tertiary-fixed": "#dce3eb",
+            "surface-container-lowest": "#ffffff",
+            "on-error": "#ffffff",
+            "surface-container-high": "#e7e8e9",
+            "on-secondary": "#ffffff",
+            "error-container": "#ffdad6",
+            "surface": "#f8f9fa",
+            "background": "#f8f9fa",
+            "primary-container": "#005eb8",
+            "inverse-surface": "#2e3132",
+            "on-primary-fixed": "#001b3d",
+            "secondary": "#006a6a",
+            "secondary-container": "#8cf3f3",
+            "on-tertiary-fixed-variant": "#40484e",
+            "on-secondary-fixed": "#002020",
+            "surface-dim": "#d9dadb",
+            "surface-variant": "#e1e3e4",
+            "on-surface": "#191c1d",
+            "tertiary-container": "#596067",
+            "on-primary": "#ffffff",
+            "inverse-primary": "#a9c7ff",
+            "on-tertiary": "#ffffff",
+            "error": "#ba1a1a",
+            "outline-variant": "#c2c6d4"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "margin-mobile": "16px",
+            "base": "8px",
+            "gutter": "24px",
+            "margin-desktop": "40px",
+            "container-max": "1280px"
+          },
+          "fontFamily": {
+            "body-md": ["Inter"],
+            "display-lg": ["Inter"],
+            "caption": ["Inter"],
+            "body-lg": ["Inter"],
+            "label-md": ["Inter"],
+            "headline-lg": ["Inter"],
+            "headline-md": ["Inter"],
+            "headline-lg-mobile": ["Inter"]
+          },
+          "fontSize": {
+            "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+            "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+            "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+            "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+            "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+            "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased min-h-screen flex flex-col pb-16 md:pb-0">
+
+  <!-- TopAppBar -->
+  <header class="bg-surface shadow-sm sticky top-0 z-50 w-full">
+    <div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto h-20 w-full">
+      <a href="/" class="flex items-center gap-3 cursor-pointer hover:opacity-85 transition-opacity" title="Hospital Management System Home">
+        <span class="material-symbols-outlined text-primary text-[28px] fill-icon" data-icon="medical_services">medical_services</span>
+        <span class="text-headline-md font-headline-md font-bold text-primary">Hospital Management System</span>
+      </a>
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex items-center gap-8">
+        <a class="text-primary border-b-2 border-primary pb-1 text-label-md font-label-md" href="#">Home</a>
+        <a class="text-on-surface-variant text-label-md font-label-md hover:text-primary transition-colors" href="/chatbot">AI Chatbot</a>
+        <a class="text-on-surface-variant text-label-md font-label-md hover:text-primary transition-colors" href="/voice-call">Voice Call Agent</a>
+        <a class="text-on-surface-variant text-label-md font-label-md hover:text-primary transition-colors" href="/admin">Admin Portal</a>
+      </nav>
+      <button class="bg-error text-on-error px-4 py-2 rounded-full text-label-md font-label-md flex items-center gap-2 hover:bg-on-error-container transition-colors min-h-[48px]" onclick="window.location.href='tel:911'">
+        <span class="material-symbols-outlined" data-icon="emergency">emergency</span>
+        Emergency: 911
+      </button>
+    </div>
+  </header>
+
+  <main class="flex-grow">
+    <!-- Hero Section -->
+    <section class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-[80px] md:py-[120px]">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-gutter items-center">
+        <div class="md:col-span-6 space-y-6">
+          <div class="inline-flex items-center gap-2 bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-label-md font-label-md">
+            <span class="material-symbols-outlined text-[18px]" data-icon="clinical_fe">clinical_fe</span>
+            Compassionate Care. Human Empathy.
+          </div>
+          <h1 class="text-display-lg font-display-lg text-on-surface leading-tight">Advanced Medicine. Guided by AI.</h1>
+          <p class="text-body-lg font-body-lg text-on-surface-variant max-w-xl">
+            Welcome to Hospital Management System. We combine leading clinical specialists with virtual assistant agents to ensure seamless appointment booking, diagnostics coordination, and healthcare management.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4 pt-4">
+            <a href="/chatbot" class="bg-primary text-on-primary px-6 py-3 rounded-full text-label-md font-label-md flex items-center justify-center gap-2 hover:bg-primary-container transition-colors min-h-[48px]">
+              Launch AI Chatbot
+              <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+            </a>
+            <a href="/voice-call" class="border border-secondary text-secondary px-6 py-3 rounded-full text-label-md font-label-md flex items-center justify-center gap-2 hover:bg-surface-container-low transition-colors min-h-[48px]">
+              Call AI Receptionist
+              <span class="material-symbols-outlined" data-icon="phone_callback">phone_callback</span>
+            </a>
+          </div>
+        </div>
+        <div class="md:col-span-6 mt-12 md:mt-0">
+          <div class="rounded-xl overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.08)] bg-surface-container-lowest h-[400px] md:h-[500px]">
+            <img alt="Clinician Analysis Room" class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1200&q=80"/>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Services & Pricing Section (Bento Grid) -->
+    <section class="bg-surface-container-low py-[80px] md:py-[120px]">
+      <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+        <div class="text-center mb-12">
+          <h2 class="text-headline-lg font-headline-lg text-on-surface mb-4">Transparent Pricing & Specialised Departments</h2>
+          <p class="text-body-md font-body-md text-on-surface-variant max-w-2xl mx-auto">
+            Review our services and set up appointments directly using our automated AI virtual agents.
+          </p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-gutter auto-rows-[minmax(180px,auto)]">
+          <!-- Pediatrics -->
+          <div class="md:col-span-8 bg-surface-container-lowest rounded-xl p-8 border border-outline-variant/30 hover:shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition-all flex flex-col justify-between group">
+            <div class="flex items-start justify-between mb-4">
+              <div class="bg-surface-container w-12 h-12 rounded-full flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
+                <span class="material-symbols-outlined" data-icon="child_care">child_care</span>
+              </div>
+              <span class="bg-primary-container text-on-primary-container px-3 py-1 rounded-full text-label-md font-label-md">$80</span>
+            </div>
+            <div>
+              <h3 class="text-headline-md font-headline-md text-on-surface mb-2">Pediatrics & Child Health</h3>
+              <p class="text-body-md font-body-md text-on-surface-variant">Pediatric immunisation, child wellness exams, growth tracking, and primary care by Dr. Sunita Sharma.</p>
+            </div>
+          </div>
+          <!-- General Consultation -->
+          <div class="md:col-span-4 bg-primary text-on-primary rounded-xl p-8 shadow-sm flex flex-col justify-between">
+            <div class="flex justify-between items-start mb-4">
+              <div class="bg-on-primary/20 w-12 h-12 rounded-full flex items-center justify-center text-on-primary">
+                <span class="material-symbols-outlined" data-icon="medical_information">medical_information</span>
+              </div>
+              <span class="bg-surface-container-lowest text-primary px-3 py-1 rounded-full text-label-md font-label-md">$50</span>
+            </div>
+            <div>
+              <h3 class="text-headline-md font-headline-md mb-2">General Consultation</h3>
+              <p class="text-body-md font-body-md text-on-primary-container opacity-90">Family medicine, physical examinations, and acute illness care with Dr. Ramesh Mehta.</p>
+            </div>
+          </div>
+          <!-- Dentistry -->
+          <div class="md:col-span-4 bg-surface-container-lowest rounded-xl p-8 border border-outline-variant/30 hover:shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition-all flex flex-col justify-between group">
+            <div class="flex justify-between items-start mb-4">
+              <div class="bg-surface-container w-12 h-12 rounded-full flex items-center justify-center text-secondary group-hover:bg-secondary group-hover:text-on-secondary transition-colors">
+                <span class="material-symbols-outlined" data-icon="dentistry">dentistry</span>
+              </div>
+              <span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-label-md font-label-md">$250</span>
+            </div>
+            <div>
+              <h3 class="text-headline-md font-headline-md text-on-surface mb-2">Dentistry & Oral Surgery</h3>
+              <p class="text-body-md font-body-md text-on-surface-variant">Preventative care, oral checkups, dental cleanings, and root canals with Dr. Manoj Kumar.</p>
+            </div>
+          </div>
+          <!-- Cardiology -->
+          <div class="md:col-span-8 bg-surface-container-lowest rounded-xl p-8 border border-outline-variant/30 hover:shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition-all flex flex-col md:flex-row gap-6 items-center group">
+            <div class="flex-1">
+              <div class="flex justify-between items-start mb-4">
+                <div class="bg-surface-container w-12 h-12 rounded-full flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
+                  <span class="material-symbols-outlined" data-icon="monitor_heart">monitor_heart</span>
+                </div>
+                <span class="bg-primary-container text-on-primary-container px-3 py-1 rounded-full text-label-md font-label-md">$190</span>
+              </div>
+              <h3 class="text-headline-md font-headline-md text-on-surface mb-2">Cardiology & Heart Care</h3>
+              <p class="text-body-md font-body-md text-on-surface-variant">Specialized cardiovascular screenings, blood pressure logs, and ECG exams with Dr. Tarun Verma.</p>
+            </div>
+            <div class="w-full md:w-1/3 h-40 rounded-lg overflow-hidden bg-surface-container">
+              <img alt="Echocardiogram Monitoring" class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80"/>
+            </div>
+          </div>
+          <!-- Mental Health -->
+          <div class="md:col-span-6 bg-surface-container-lowest rounded-xl p-8 border border-outline-variant/30 hover:shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition-all flex flex-col justify-between group">
+            <div class="flex justify-between items-start mb-4">
+              <div class="bg-surface-container w-12 h-12 rounded-full flex items-center justify-center text-secondary group-hover:bg-secondary group-hover:text-on-secondary transition-colors">
+                <span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+              </div>
+              <span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-label-md font-label-md">$120</span>
+            </div>
+            <div>
+              <h3 class="text-headline-md font-headline-md text-on-surface mb-2">Psychology & Mental Health</h3>
+              <p class="text-body-md font-body-md text-on-surface-variant">Mental health diagnostics, counseling, therapy sessions, and wellness plans with Dr. Shalini Iyer.</p>
+            </div>
+          </div>
+          <!-- Diagnostics & Labs -->
+          <div class="md:col-span-6 bg-surface-container-lowest rounded-xl p-8 border border-outline-variant/30 hover:shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition-all flex flex-col justify-between group">
+            <div class="flex justify-between items-start mb-4">
+              <div class="bg-surface-container w-12 h-12 rounded-full flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
+                <span class="material-symbols-outlined" data-icon="biotech">biotech</span>
+              </div>
+              <span class="bg-primary-container text-on-primary-container px-3 py-1 rounded-full text-label-md font-label-md">$65</span>
+            </div>
+            <div>
+              <h3 class="text-headline-md font-headline-md text-on-surface mb-2">Diagnostics & Lab Work</h3>
+              <p class="text-body-md font-body-md text-on-surface-variant">On-site diagnostic assays, routine blood chemistry screens, and clinical testing.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Specialists Section -->
+    <section class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-[80px] md:py-[120px]">
+      <div class="flex flex-col md:flex-row justify-between items-end mb-12 border-b border-outline-variant/30 pb-6">
+        <div>
+          <h2 class="text-headline-lg font-headline-lg text-on-surface mb-2">Meet Our Specialist Physicians</h2>
+          <p class="text-body-md font-body-md text-on-surface-variant">Renowned clinical experts dedicated to your family's health.</p>
+        </div>
+      </div>
+      
+      <!-- Doctor grid showing all 5 doctors with uniform visual style -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+        <!-- Specialist 1 -->
+        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/30 overflow-hidden hover:shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition-shadow">
+          <div class="h-64 bg-surface-container relative">
+            <img alt="Dr. Sunita Sharma" class="w-full h-full object-cover object-top" src="https://images.unsplash.com/photo-1651008376811-b90baee60c1f?auto=format&fit=crop&w=600&q=80"/>
+            <div class="absolute top-4 right-4 bg-surface-container-lowest text-secondary px-3 py-1 rounded-full text-caption font-caption flex items-center gap-1 shadow-sm">
+              <span class="w-2 h-2 rounded-full bg-secondary"></span>
+              Accepting Patients
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-headline-md font-headline-md text-on-surface mb-1">Dr. Sunita Sharma, MD</h3>
+            <p class="text-primary text-label-md font-label-md mb-4">Pediatrics & Child Health</p>
+            <p class="text-body-md font-body-md text-on-surface-variant mb-6">Schedule: Mon, Wed, Fri (9:00 AM – 4:00 PM)</p>
+            <a href="/chatbot" class="w-full border border-secondary text-secondary px-4 py-3 rounded-full text-label-md font-label-md hover:bg-surface-container-low transition-colors min-h-[48px] flex items-center justify-center gap-2">
+              Book Appointment
+            </a>
+          </div>
+        </div>
+        <!-- Specialist 2 -->
+        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/30 overflow-hidden hover:shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition-shadow">
+          <div class="h-64 bg-surface-container relative">
+            <img alt="Dr. Manoj Kumar" class="w-full h-full object-cover object-top" src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=600&q=80"/>
+            <div class="absolute top-4 right-4 bg-surface-container-lowest text-secondary px-3 py-1 rounded-full text-caption font-caption flex items-center gap-1 shadow-sm">
+              <span class="w-2 h-2 rounded-full bg-secondary"></span>
+              Accepting Patients
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-headline-md font-headline-md text-on-surface mb-1">Dr. Manoj Kumar, DDS</h3>
+            <p class="text-primary text-label-md font-label-md mb-4">Dentistry & Oral Surgery</p>
+            <p class="text-body-md font-body-md text-on-surface-variant mb-6">Schedule: Mon – Sat (10:00 AM – 6:00 PM)</p>
+            <a href="/chatbot" class="w-full border border-secondary text-secondary px-4 py-3 rounded-full text-label-md font-label-md hover:bg-surface-container-low transition-colors min-h-[48px] flex items-center justify-center gap-2">
+              Book Appointment
+            </a>
+          </div>
+        </div>
+        <!-- Specialist 3 -->
+        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/30 overflow-hidden hover:shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition-shadow">
+          <div class="h-64 bg-surface-container relative">
+            <img alt="Dr. Shalini Iyer" class="w-full h-full object-cover object-top" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80"/>
+            <div class="absolute top-4 right-4 bg-surface-container-lowest text-secondary px-3 py-1 rounded-full text-caption font-caption flex items-center gap-1 shadow-sm">
+              <span class="w-2 h-2 rounded-full bg-secondary"></span>
+              Accepting Patients
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-headline-md font-headline-md text-on-surface mb-1">Dr. Shalini Iyer, PhD</h3>
+            <p class="text-primary text-label-md font-label-md mb-4">Psychology & Mental Health</p>
+            <p class="text-body-md font-body-md text-on-surface-variant mb-6">Schedule: Tue, Thu, Sat (11:00 AM – 5:00 PM)</p>
+            <a href="/chatbot" class="w-full border border-secondary text-secondary px-4 py-3 rounded-full text-label-md font-label-md hover:bg-surface-container-low transition-colors min-h-[48px] flex items-center justify-center gap-2">
+              Book Appointment
+            </a>
+          </div>
+        </div>
+        <!-- Specialist 4 -->
+        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/30 overflow-hidden hover:shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition-shadow">
+          <div class="h-64 bg-surface-container relative">
+            <img alt="Dr. Tarun Verma" class="w-full h-full object-cover object-top" src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=600&q=80"/>
+            <div class="absolute top-4 right-4 bg-surface-container-lowest text-secondary px-3 py-1 rounded-full text-caption font-caption flex items-center gap-1 shadow-sm">
+              <span class="w-2 h-2 rounded-full bg-secondary"></span>
+              Accepting Patients
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-headline-md font-headline-md text-on-surface mb-1">Dr. Tarun Verma, MD</h3>
+            <p class="text-primary text-label-md font-label-md mb-4">Cardiology & Heart Care</p>
+            <p class="text-body-md font-body-md text-on-surface-variant mb-6">Schedule: Mon – Fri (8:00 AM – 3:00 PM)</p>
+            <a href="/chatbot" class="w-full border border-secondary text-secondary px-4 py-3 rounded-full text-label-md font-label-md hover:bg-surface-container-low transition-colors min-h-[48px] flex items-center justify-center gap-2">
+              Book Appointment
+            </a>
+          </div>
+        </div>
+        <!-- Specialist 5 -->
+        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/30 overflow-hidden hover:shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition-shadow">
+          <div class="h-64 bg-surface-container relative">
+            <img alt="Dr. Ramesh Mehta" class="w-full h-full object-cover object-top" src="https://images.unsplash.com/photo-1582750433449-648ed127bb54?auto=format&fit=crop&w=600&q=80"/>
+            <div class="absolute top-4 right-4 bg-surface-container-lowest text-secondary px-3 py-1 rounded-full text-caption font-caption flex items-center gap-1 shadow-sm">
+              <span class="w-2 h-2 rounded-full bg-secondary"></span>
+              Accepting Patients
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-headline-md font-headline-md text-on-surface mb-1">Dr. Ramesh Mehta, MD</h3>
+            <p class="text-primary text-label-md font-label-md mb-4">General Consultation & Family GP</p>
+            <p class="text-body-md font-body-md text-on-surface-variant mb-6">Schedule: Mon-Fri 8am-7pm, Sat 9am-4pm</p>
+            <a href="/chatbot" class="w-full border border-secondary text-secondary px-4 py-3 rounded-full text-label-md font-label-md hover:bg-surface-container-low transition-colors min-h-[48px] flex items-center justify-center gap-2">
+              Book Appointment
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Clinic Details & Policy Info -->
+    <section class="bg-surface-container-low py-[80px] md:py-[120px]">
+      <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-3 gap-gutter text-center md:text-left">
+        <div class="bg-surface-container-lowest p-8 rounded-xl border border-outline-variant/30">
+          <span class="material-symbols-outlined text-primary text-headline-lg mb-4" data-icon="schedule">schedule</span>
+          <h3 class="text-headline-md font-headline-md text-on-surface mb-2">Clinic Hours</h3>
+          <p class="text-body-md text-on-surface-variant">Monday – Friday: 8:00 AM – 7:00 PM</p>
+          <p class="text-body-md text-on-surface-variant">Saturday: 9:00 AM – 4:00 PM</p>
+          <p class="text-body-md text-on-surface-variant">Sunday: Closed</p>
+        </div>
+        <div class="bg-surface-container-lowest p-8 rounded-xl border border-outline-variant/30">
+          <span class="material-symbols-outlined text-primary text-headline-lg mb-4" data-icon="directions_car">directions_car</span>
+          <h3 class="text-headline-md font-headline-md text-on-surface mb-2">Location & Parking</h3>
+          <p class="text-body-md text-on-surface-variant">742 Evergreen Terrace</p>
+          <p class="text-body-md text-on-surface-variant mt-2">Free patient parking is available in the rear lot. Accessible entrance via main lobby.</p>
+        </div>
+        <div class="bg-surface-container-lowest p-8 rounded-xl border border-outline-variant/30">
+          <span class="material-symbols-outlined text-primary text-headline-lg mb-4" data-icon="verified_user">verified_user</span>
+          <h3 class="text-headline-md font-headline-md text-on-surface mb-2">Insurance & Fees</h3>
+          <p class="text-body-md text-on-surface-variant">We accept BlueCross BlueShield, Aetna, Cigna, UnitedHealthcare, Medicare, and self-pay patients.</p>
+          <p class="text-body-md text-on-surface-variant mt-2 font-semibold">Cancellations require 24h notice to avoid a $35 late fee.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-surface-container py-12 px-margin-mobile md:px-margin-desktop border-t border-outline-variant w-full">
+    <div class="max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-center md:items-start gap-8">
+      <div class="text-center md:text-left">
+        <div class="text-headline-md font-headline-md text-primary mb-2">Hospital Management System</div>
+        <p class="text-body-md font-body-md text-secondary">© 2026 Hospital Management System. All rights reserved. Clinical Excellence. Human Empathy.</p>
+      </div>
+      <div class="flex flex-wrap justify-center md:justify-end gap-6">
+        <a class="text-label-md font-label-md text-on-surface-variant hover:underline hover:text-primary transition-all duration-200" href="/chatbot">AI Chatbot</a>
+        <a class="text-label-md font-label-md text-on-surface-variant hover:underline hover:text-primary transition-all duration-200" href="/voice-call">Voice Receptionist</a>
+        <a class="text-label-md font-label-md text-on-surface-variant hover:underline hover:text-primary transition-all duration-200" href="/admin">Admin Dashboard</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- BottomNavBar (Mobile Only) -->
+  <nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center py-2 px-margin-mobile bg-surface shadow-[0_-2px_10px_rgba(0,0,0,0.05)] rounded-t-xl">
+    <a class="flex flex-col items-center justify-center text-primary bg-primary-container rounded-full px-4 py-1 scale-95 duration-200" href="#">
+      <span class="material-symbols-outlined mb-1 fill-icon" data-icon="home">home</span>
+      <span class="text-[10px] font-label-md font-bold">Home</span>
+    </a>
+    <a class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:bg-surface-container-high transition-all p-2 rounded-lg" href="/chatbot">
+      <span class="material-symbols-outlined mb-1" data-icon="chat">chat</span>
+      <span class="text-[10px] font-label-md">Chatbot</span>
+    </a>
+    <a class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:bg-surface-container-high transition-all p-2 rounded-lg" href="/voice-call">
+      <span class="material-symbols-outlined mb-1" data-icon="phone_callback">phone_callback</span>
+      <span class="text-[10px] font-label-md">Voice Agent</span>
+    </a>
+    <a class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:bg-surface-container-high transition-all p-2 rounded-lg" href="/admin">
+      <span class="material-symbols-outlined mb-1" data-icon="account_circle">account_circle</span>
+      <span class="text-[10px] font-label-md">Admin</span>
+    </a>
+  </nav>
+
+</body>
+</html>
