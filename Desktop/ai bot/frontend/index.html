@@ -129,7 +129,9 @@
   <header class="bg-surface shadow-sm sticky top-0 z-50 w-full">
     <div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto h-20 w-full">
       <a href="/" class="flex items-center gap-3 cursor-pointer hover:opacity-85 transition-opacity" title="Hospital Management System Home">
-        <span class="material-symbols-outlined text-primary text-[28px] fill-icon" data-icon="medical_services">medical_services</span>
+        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white shadow-sm">
+          <i class="fa-solid fa-hospital text-[18px]"></i>
+        </div>
         <span class="text-headline-md font-headline-md font-bold text-primary">Hospital Management System</span>
       </a>
       <!-- Desktop Navigation -->
@@ -140,7 +142,7 @@
         <a class="text-on-surface-variant text-label-md font-label-md hover:text-primary transition-colors" href="/admin">Admin Portal</a>
       </nav>
       <button class="bg-error text-on-error px-4 py-2 rounded-full text-label-md font-label-md flex items-center gap-2 hover:bg-on-error-container transition-colors min-h-[48px]" onclick="window.location.href='tel:911'">
-        <span class="material-symbols-outlined" data-icon="emergency">emergency</span>
+        <i class="fa-solid fa-phone-volume text-[14px]"></i>
         Emergency: 911
       </button>
     </div>
@@ -152,7 +154,7 @@
       <div class="grid grid-cols-1 md:grid-cols-12 gap-gutter items-center">
         <div class="md:col-span-6 space-y-6">
           <div class="inline-flex items-center gap-2 bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-label-md font-label-md">
-            <span class="material-symbols-outlined text-[18px]" data-icon="clinical_fe">clinical_fe</span>
+            <i class="fa-solid fa-heart-pulse text-[14px]"></i>
             Compassionate Care. Human Empathy.
           </div>
           <h1 class="text-display-lg font-display-lg text-on-surface leading-tight">Advanced Medicine. Guided by AI.</h1>
@@ -162,11 +164,11 @@
           <div class="flex flex-col sm:flex-row gap-4 pt-4">
             <a href="/chatbot" class="bg-primary text-on-primary px-6 py-3 rounded-full text-label-md font-label-md flex items-center justify-center gap-2 hover:bg-primary-container transition-colors min-h-[48px]">
               Launch AI Chatbot
-              <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+              <i class="fa-solid fa-arrow-right text-[14px]"></i>
             </a>
             <a href="/voice-call" class="border border-secondary text-secondary px-6 py-3 rounded-full text-label-md font-label-md flex items-center justify-center gap-2 hover:bg-surface-container-low transition-colors min-h-[48px]">
               Call AI Receptionist
-              <span class="material-symbols-outlined" data-icon="phone_callback">phone_callback</span>
+              <i class="fa-solid fa-phone text-[14px]"></i>
             </a>
           </div>
         </div>
@@ -192,7 +194,7 @@
           <div class="md:col-span-8 bg-surface-container-lowest rounded-xl p-8 border border-outline-variant/30 hover:shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition-all flex flex-col justify-between group">
             <div class="flex items-start justify-between mb-4">
               <div class="bg-surface-container w-12 h-12 rounded-full flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
-                <span class="material-symbols-outlined" data-icon="child_care">child_care</span>
+                <i class="fa-solid fa-child-reaching text-[20px]"></i>
               </div>
               <span class="bg-primary-container text-on-primary-container px-3 py-1 rounded-full text-label-md font-label-md">$80</span>
             </div>
@@ -205,7 +207,7 @@
           <div class="md:col-span-4 bg-primary text-on-primary rounded-xl p-8 shadow-sm flex flex-col justify-between">
             <div class="flex justify-between items-start mb-4">
               <div class="bg-on-primary/20 w-12 h-12 rounded-full flex items-center justify-center text-on-primary">
-                <span class="material-symbols-outlined" data-icon="medical_information">medical_information</span>
+                <i class="fa-solid fa-user-doctor text-[20px]"></i>
               </div>
               <span class="bg-surface-container-lowest text-primary px-3 py-1 rounded-full text-label-md font-label-md">$50</span>
             </div>
@@ -218,7 +220,7 @@
           <div class="md:col-span-4 bg-surface-container-lowest rounded-xl p-8 border border-outline-variant/30 hover:shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition-all flex flex-col justify-between group">
             <div class="flex justify-between items-start mb-4">
               <div class="bg-surface-container w-12 h-12 rounded-full flex items-center justify-center text-secondary group-hover:bg-secondary group-hover:text-on-secondary transition-colors">
-                <span class="material-symbols-outlined" data-icon="dentistry">dentistry</span>
+                <i class="fa-solid fa-tooth text-[20px]"></i>
               </div>
               <span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-label-md font-label-md">$250</span>
             </div>
@@ -232,7 +234,7 @@
             <div class="flex-1">
               <div class="flex justify-between items-start mb-4">
                 <div class="bg-surface-container w-12 h-12 rounded-full flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
-                  <span class="material-symbols-outlined" data-icon="monitor_heart">monitor_heart</span>
+                  <i class="fa-solid fa-heart-pulse text-[20px]"></i>
                 </div>
                 <span class="bg-primary-container text-on-primary-container px-3 py-1 rounded-full text-label-md font-label-md">$190</span>
               </div>
@@ -247,7 +249,7 @@
           <div class="md:col-span-6 bg-surface-container-lowest rounded-xl p-8 border border-outline-variant/30 hover:shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition-all flex flex-col justify-between group">
             <div class="flex justify-between items-start mb-4">
               <div class="bg-surface-container w-12 h-12 rounded-full flex items-center justify-center text-secondary group-hover:bg-secondary group-hover:text-on-secondary transition-colors">
-                <span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+                <i class="fa-solid fa-brain text-[20px]"></i>
               </div>
               <span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-label-md font-label-md">$120</span>
             </div>
@@ -260,7 +262,7 @@
           <div class="md:col-span-6 bg-surface-container-lowest rounded-xl p-8 border border-outline-variant/30 hover:shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition-all flex flex-col justify-between group">
             <div class="flex justify-between items-start mb-4">
               <div class="bg-surface-container w-12 h-12 rounded-full flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
-                <span class="material-symbols-outlined" data-icon="biotech">biotech</span>
+                <i class="fa-solid fa-vials text-[20px]"></i>
               </div>
               <span class="bg-primary-container text-on-primary-container px-3 py-1 rounded-full text-label-md font-label-md">$65</span>
             </div>
@@ -381,20 +383,20 @@
     <section class="bg-surface-container-low py-[80px] md:py-[120px]">
       <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-3 gap-gutter text-center md:text-left">
         <div class="bg-surface-container-lowest p-8 rounded-xl border border-outline-variant/30">
-          <span class="material-symbols-outlined text-primary text-headline-lg mb-4" data-icon="schedule">schedule</span>
+          <div class="text-primary text-[28px] mb-4"><i class="fa-solid fa-clock"></i></div>
           <h3 class="text-headline-md font-headline-md text-on-surface mb-2">Clinic Hours</h3>
           <p class="text-body-md text-on-surface-variant">Monday – Friday: 8:00 AM – 7:00 PM</p>
           <p class="text-body-md text-on-surface-variant">Saturday: 9:00 AM – 4:00 PM</p>
           <p class="text-body-md text-on-surface-variant">Sunday: Closed</p>
         </div>
         <div class="bg-surface-container-lowest p-8 rounded-xl border border-outline-variant/30">
-          <span class="material-symbols-outlined text-primary text-headline-lg mb-4" data-icon="directions_car">directions_car</span>
+          <div class="text-primary text-[28px] mb-4"><i class="fa-solid fa-car"></i></div>
           <h3 class="text-headline-md font-headline-md text-on-surface mb-2">Location & Parking</h3>
           <p class="text-body-md text-on-surface-variant">742 Evergreen Terrace</p>
           <p class="text-body-md text-on-surface-variant mt-2">Free patient parking is available in the rear lot. Accessible entrance via main lobby.</p>
         </div>
         <div class="bg-surface-container-lowest p-8 rounded-xl border border-outline-variant/30">
-          <span class="material-symbols-outlined text-primary text-headline-lg mb-4" data-icon="verified_user">verified_user</span>
+          <div class="text-primary text-[28px] mb-4"><i class="fa-solid fa-shield-halved"></i></div>
           <h3 class="text-headline-md font-headline-md text-on-surface mb-2">Insurance & Fees</h3>
           <p class="text-body-md text-on-surface-variant">We accept BlueCross BlueShield, Aetna, Cigna, UnitedHealthcare, Medicare, and self-pay patients.</p>
           <p class="text-body-md text-on-surface-variant mt-2 font-semibold">Cancellations require 24h notice to avoid a $35 late fee.</p>
@@ -421,19 +423,19 @@
   <!-- BottomNavBar (Mobile Only) -->
   <nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center py-2 px-margin-mobile bg-surface shadow-[0_-2px_10px_rgba(0,0,0,0.05)] rounded-t-xl">
     <a class="flex flex-col items-center justify-center text-primary bg-primary-container rounded-full px-4 py-1 scale-95 duration-200" href="#">
-      <span class="material-symbols-outlined mb-1 fill-icon" data-icon="home">home</span>
+      <i class="fa-solid fa-house mb-1"></i>
       <span class="text-[10px] font-label-md font-bold">Home</span>
     </a>
     <a class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:bg-surface-container-high transition-all p-2 rounded-lg" href="/chatbot">
-      <span class="material-symbols-outlined mb-1" data-icon="chat">chat</span>
+      <i class="fa-solid fa-comments mb-1"></i>
       <span class="text-[10px] font-label-md">Chatbot</span>
     </a>
     <a class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:bg-surface-container-high transition-all p-2 rounded-lg" href="/voice-call">
-      <span class="material-symbols-outlined mb-1" data-icon="phone_callback">phone_callback</span>
+      <i class="fa-solid fa-phone mb-1"></i>
       <span class="text-[10px] font-label-md">Voice Agent</span>
     </a>
     <a class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:bg-surface-container-high transition-all p-2 rounded-lg" href="/admin">
-      <span class="material-symbols-outlined mb-1" data-icon="account_circle">account_circle</span>
+      <i class="fa-solid fa-user-gear mb-1"></i>
       <span class="text-[10px] font-label-md">Admin</span>
     </a>
   </nav>
